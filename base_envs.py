@@ -38,9 +38,22 @@ class PointRandomWalkState(EnvState):
     ref_vel: jnp.ndarray
     ref_acc: jnp.ndarray
 
+
+@struct.dataclass
+class PointLissajousTrackingState(EnvState):
+    pos: jnp.ndarray
+    vel: jnp.ndarray
+    ref_pos: jnp.ndarray
+    ref_vel: jnp.ndarray
+    ref_acc: jnp.ndarray
+    amplitudes: jnp.ndarray
+    frequencies: jnp.ndarray
+    phases: jnp.ndarray
+
+
 class PointParticleBase:
     def __init__ (self, ref_pos=None, equivariant=False, state_cov_scalar=0.5, ref_cov_scalar=3.0, dt=0.05, max_time=100.0, terminate_on_error=True, 
-                  reward_q = 1e-2, reward_r = 1e-4, termination_bound = 10., terminal_reward = 0.0, reward_reach=0.1, **kwargs):
+                  reward_q_pos = 1e-2, reward_q_vel = 1e-2, reward_r = 1e-4, termination_bound = 10., terminal_reward = 0.0, reward_reach=False, use_des_action_in_reward=True, **kwargs):
         self.state_mean = jnp.array([0., 0., 0.])
         self.state_cov = jnp.eye(3) * state_cov_scalar
         self.ref_mean = jnp.array([0., 0., 0.])
@@ -55,8 +68,10 @@ class PointParticleBase:
         self.termination_bound = termination_bound
         self.terminal_reward = terminal_reward
         self.reach_reward = reward_reach
-        self.reward_q = reward_q
+        self.reward_q_pos = reward_q_pos
+        self.reward_q_vel = reward_q_vel
         self.reward_r = reward_r
+        self.use_des_action_in_reward = use_des_action_in_reward
 
         self.epsilon_ball_radius = 1e-2
 
@@ -112,7 +127,7 @@ class PointParticleBase:
 
         return jnp.any(jnp.linalg.norm(env_state.ref_pos - env_state.pos) ** 2 < self.epsilon_ball_radius)
 
-    def _get_reward(self, env_state, action,):
+    def _get_reward(self, env_state, action, des_action=0.0):
         '''
         Get reward from the environment state. 
         Reward is defined as the "LQR" cost function: scaled position error and scaled velocity error
@@ -122,10 +137,22 @@ class PointParticleBase:
 
         terminal_reward = lax.select(termination_from_error, self.terminal_reward, 0.0)
 
-        dest_reached = self._is_terminal_reach(state)
-        dest_reach_reward = lax.select(dest_reached, self.reach_reward, 0.0)
+        #dest_reached = self._is_terminal_reach(state)
+        #dest_reach_reward = lax.select(dest_reached, self.reach_reward, 0.0)
+        dest_reach_reward_modified = 1.0 - jnp.tanh(0.01 * jnp.linalg.norm(env_state.ref_pos - env_state.pos) / (self.epsilon_ball_radius * 0.5))
+        
+        dest_reach_reward = lax.select(self.reach_reward, dest_reach_reward_modified, 0.0)
 
-        return -self.reward_q * (jnp.linalg.norm(state.ref_pos - state.pos)**2 + jnp.linalg.norm(state.ref_vel - state.vel)**2) - self.reward_r * (jnp.linalg.norm(action)**2) + terminal_reward + dest_reach_reward
+        reward_no_des_act = -self.reward_q_pos * (jnp.linalg.norm(state.ref_pos - state.pos)**2) - self.reward_q_vel * (jnp.linalg.norm(state.ref_vel - state.vel)**2) - self.reward_r * (jnp.linalg.norm(action)**2) + terminal_reward + dest_reach_reward
+        reward_yes_des_act = -self.reward_q_pos * (jnp.linalg.norm(state.ref_pos - state.pos)**2) - self.reward_q_vel * (jnp.linalg.norm(state.ref_vel - state.vel)**2) - self.reward_r * (jnp.linalg.norm(action - des_action)**2) + terminal_reward + dest_reach_reward
+
+        final_reward = lax.select(self.use_des_action_in_reward, reward_yes_des_act, reward_no_des_act)
+
+        #return -self.reward_q * (jnp.linalg.norm(state.ref_pos - state.pos)**2 + jnp.linalg.norm(state.ref_vel - state.vel)**2) - self.reward_r * (jnp.linalg.norm(action)**2) + terminal_reward + dest_reach_reward
+        #return -self.reward_q_pos * (jnp.linalg.norm(state.ref_pos - state.pos)**2) - self.reward_q_vel * (jnp.linalg.norm(state.ref_vel - state.vel)**2) - self.reward_r * (jnp.linalg.norm(action)**2) + terminal_reward
+        ## Add (a - a_{des}) -> Important for random walk envs
+        #return -self.reward_q_pos * (jnp.linalg.norm(state.ref_pos - state.pos)**2) - self.reward_q_vel * (jnp.linalg.norm(state.ref_vel - state.vel)**2) - self.reward_r * (jnp.linalg.norm(action - des_action)**2) + terminal_reward
+        return final_reward
 
     @property
     def num_actions(self) -> int:

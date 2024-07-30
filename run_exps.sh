@@ -7,7 +7,7 @@ echo "==============================================================="
 python3 train_policy.py --env-name position --exp-name test_position_equivariant --equivariant --add-desc "Eq version, with termination on error and bad, good reward"
 sleep 2
 echo "==============================================================="
-python3 train_policy.py --env-name constant_velocity --exp-name test_constant_velocity --add-desc "Non-Eq version, with termination on error and bad, good reward, constant velocity sampled randomly"
+python3 train_policy.py --env-name constant_velocity --exp-name test_constant_velocity --add-desc " Non-Eq version, with termination on error and bad, good reward, constant velocity sampled randomly"
 sleep 2
 echo "==============================================================="
 python3 train_policy.py --env-name constant_velocity --exp-name test_constant_velocity_equivariant --equivariant --add-desc "Eq version, with termination on error and bad, good reward, constant velocity sampled randomly"
@@ -19,10 +19,46 @@ echo "==============================================================="
 python3 train_policy.py --env-name random_walk_position --exp-name test_random_walk_position_equivariant --equivariant --add-desc "Eq version, with termination on error and bad, good reward and random velocity sampled each time instant"
 sleep 2
 echo "==============================================================="
-python3 train_policy.py --env-name random_walk_velocity --exp-name test_random_walk_velocity --add-desc "Non-Eq version, with termination on error and bad, good reward and random accel sampled each time instant"
+python3 train_policy.py --env-name random_walk_velocity --exp-name test_random_walk_velocity --add-desc "Non-Eq version, with termination on error and bad, good reward and random accel sampled each time instant, and desired action in the reward function"
 sleep 2
 echo "==============================================================="
-python3 train_policy.py --env-name random_walk_velocity --exp-name test_random_walk_velocity_equivariant --equivariant --add-desc "Eq version, with termination on error and bad, good reward and random accel sampled each time instant"
+python3 train_policy.py --env-name random_walk_velocity --exp-name test_random_walk_velocity_equivariant --equivariant --add-desc "Eq version, with termination on error and bad, good reward and random accel sampled each time instant, and desired action in the reward function"
+sleep 2
+echo "==============================================================="
+python3 train_policy.py --env-name random_walk_velocity --exp-name test_random_walk_velocity_r_5e-4 --reward_r 5e-4 --add-desc "Non-Eq version, with termination on error and bad, good reward and random accel sampled each time instant, and desired action in the reward function"
+sleep 2
+echo "==============================================================="
+python3 train_policy.py --env-name random_walk_velocity --exp-name test_random_walk_velocity_equivariant_r_5e-4 --reward_r 5e-4  --equivariant --add-desc "Eq version, with termination on error and bad, good reward and random accel sampled each time instant, and desired action in the reward function"
+sleep 2
+echo "==============================================================="
+python3 train_policy.py --env-name random_walk_velocity --exp-name test_random_walk_velocity_r_1e-3 --reward_r 1e-3 --add-desc "Non-Eq version, with termination on error and bad, good reward and random accel sampled each time instant, and desired action in the reward function"
+sleep 2
+echo "==============================================================="
+python3 train_policy.py --env-name random_walk_velocity --exp-name test_random_walk_velocity_equivariant_r_1e-3 --reward_r 1e-3  --equivariant --add-desc "Eq version, with termination on error and bad, good reward and random accel sampled each time instant, and desired action in the reward function"
+sleep 2
+echo "==============================================================="
+python3 train_policy.py --env-name random_walk_velocity --exp-name test_random_walk_velocity_r_5e-3 --reward_r 5e-3 --add-desc "Non-Eq version, with termination on error and bad, good reward and random accel sampled each time instant, and desired action in the reward function"
+sleep 2
+echo "==============================================================="
+python3 train_policy.py --env-name random_walk_velocity --exp-name test_random_walk_velocity_equivariant_r_5e-3 --reward_r 5e-3  --equivariant --add-desc "Eq version, with termination on error and bad, good reward and random accel sampled each time instant, and desired action in the reward function"
+sleep 2
+echo "==============================================================="
+python3 train_policy.py --env-name random_walk_velocity --exp-name test_random_walk_velocity_r_1e-2 --reward_r 1e-2 --add-desc "Non-Eq version, with termination on error and bad, good reward and random accel sampled each time instant, and desired action in the reward function"
+sleep 2
+echo "==============================================================="
+python3 train_policy.py --env-name random_walk_velocity --exp-name test_random_walk_velocity_equivariant_r_1e-2 --reward_r 1e-2  --equivariant --add-desc "Eq version, with termination on error and bad, good reward and random accel sampled each time instant, and desired action in the reward function"
+sleep 2
+echo "==============================================================="
+python3 train_policy.py --env-name constant_velocity --exp-name test_constant_velocity_r_q_pos_5e-2 --reward_q_pos 5e-2 --add-desc "Non-Eq version, with termination on error and bad, good reward, constant velocity sampled randomly"
+sleep 2
+echo "==============================================================="
+python3 train_policy.py --env-name constant_velocity --exp-name test_constant_velocity_equivariant_r_q_pos_5e-2  --reward_q_pos 5e-2 --equivariant --add-desc "Eq version, with termination on error and bad, good reward, constant velocity sampled randomly"
+sleep 2
+echo "==============================================================="
+python3 train_policy.py --env-name constant_velocity --exp-name test_constant_velocity_r_q_pos_1e-1 --reward_q_pos 1e-1 --add-desc "Non-Eq version, with termination on error and bad, good reward, constant velocity sampled randomly"
+sleep 2
+echo "==============================================================="
+python3 train_policy.py --env-name constant_velocity --exp-name test_constant_velocity_equivariant_r_q_pos_1e-1  --reward_q_pos 1e-1 --equivariant --add-desc "Eq version, with termination on error and bad, good reward, constant velocity sampled randomly"
 sleep 2
 echo "==============================================================="
 

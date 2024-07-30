@@ -14,7 +14,7 @@ import os
 
 from models import ActorCritic
 from base_envs import EnvState, PointState
-from particle_envs import PointParticlePosition, PointParticleConstantVelocity, PointParticleRandomWalkPosition, PointParticleRandomWalkVelocity, PointParticleRandomWalkAccel
+from particle_envs import PointParticlePosition, PointParticleConstantVelocity, PointParticleRandomWalkPosition, PointParticleRandomWalkVelocity, PointParticleRandomWalkAccel, PointParticleLissajousTracking
 import argparse
 import ast
 
@@ -103,20 +103,23 @@ if __name__ == "__main__":
 
     # Create environment
     if args.env_name == "position":
-        env = PointParticlePosition(equivariant=train_config["EQUIVARIANT"], terminate_on_error=train_config["TERMINATE_ON_ERROR"], reward_q=train_config["REWARD_Q"], reward_r=train_config["REWARD_R"], reward_reach=train_config["REWARD_REACH"], 
-                                    termination_bound=train_config["TERMINATION_BOUND"], terminal_reward=train_config["TERMINAL_REWARD"], state_cov_scalar=train_config["STATE_COV_SCALAR"], ref_cov_scalar=train_config["REF_COV_SCALAR"])
+        env = PointParticlePosition(equivariant=train_config["EQUIVARIANT"], terminate_on_error=train_config["TERMINATE_ON_ERROR"], reward_q_pos=train_config["REWARD_Q_POS"], reward_q_vel=train_config["REWARD_Q_VEL"], reward_r=train_config["REWARD_R"], reward_reach=train_config["REWARD_REACH"], 
+                                    termination_bound=train_config["TERMINATION_BOUND"], terminal_reward=train_config["TERMINAL_REWARD"], state_cov_scalar=train_config["STATE_COV_SCALAR"], ref_cov_scalar=train_config["REF_COV_SCALAR"], use_des_action_in_reward=train_config["USE_DES_ACTION_IN_REWARD"])
     elif args.env_name == "constant_velocity":
-        env = PointParticleConstantVelocity(equivariant=train_config["EQUIVARIANT"], terminate_on_error=train_config["TERMINATE_ON_ERROR"], reward_q=train_config["REWARD_Q"], reward_r=train_config["REWARD_R"], reward_reach=train_config["REWARD_REACH"],
-                                           termination_bound=train_config["TERMINATION_BOUND"], terminal_reward=train_config["TERMINAL_REWARD"], state_cov_scalar=train_config["STATE_COV_SCALAR"], ref_cov_scalar=train_config["REF_COV_SCALAR"])
+        env = PointParticleConstantVelocity(equivariant=train_config["EQUIVARIANT"], terminate_on_error=train_config["TERMINATE_ON_ERROR"], reward_q_pos=train_config["REWARD_Q_POS"], reward_q_vel=train_config["REWARD_Q_VEL"], reward_r=train_config["REWARD_R"], reward_reach=train_config["REWARD_REACH"],
+                                           termination_bound=train_config["TERMINATION_BOUND"], terminal_reward=train_config["TERMINAL_REWARD"], state_cov_scalar=train_config["STATE_COV_SCALAR"], ref_cov_scalar=train_config["REF_COV_SCALAR"], use_des_action_in_reward=train_config["USE_DES_ACTION_IN_REWARD"])
     elif args.env_name == "random_walk_position":
-        env = PointParticleRandomWalkPosition(equivariant=train_config["EQUIVARIANT"], terminate_on_error=train_config["TERMINATE_ON_ERROR"], reward_q=train_config["REWARD_Q"], reward_r=train_config["REWARD_R"], reward_reach=train_config["REWARD_REACH"],
-                                           termination_bound=train_config["TERMINATION_BOUND"], terminal_reward=train_config["TERMINAL_REWARD"], state_cov_scalar=train_config["STATE_COV_SCALAR"], ref_cov_scalar=train_config["REF_COV_SCALAR"])
+        env = PointParticleRandomWalkPosition(equivariant=train_config["EQUIVARIANT"], terminate_on_error=train_config["TERMINATE_ON_ERROR"], reward_q_pos=train_config["REWARD_Q_POS"], reward_q_vel=train_config["REWARD_Q_VEL"], reward_r=train_config["REWARD_R"], reward_reach=train_config["REWARD_REACH"],
+                                           termination_bound=train_config["TERMINATION_BOUND"], terminal_reward=train_config["TERMINAL_REWARD"], state_cov_scalar=train_config["STATE_COV_SCALAR"], ref_cov_scalar=train_config["REF_COV_SCALAR"], use_des_action_in_reward=train_config["USE_DES_ACTION_IN_REWARD"])
     elif args.env_name == "random_walk_velocity":
-        env = PointParticleRandomWalkVelocity(equivariant=train_config["EQUIVARIANT"], terminate_on_error=train_config["TERMINATE_ON_ERROR"], reward_q=train_config["REWARD_Q"], reward_r=train_config["REWARD_R"], reward_reach=train_config["REWARD_REACH"],
-                                           termination_bound=train_config["TERMINATION_BOUND"], terminal_reward=train_config["TERMINAL_REWARD"], state_cov_scalar=train_config["STATE_COV_SCALAR"], ref_cov_scalar=train_config["REF_COV_SCALAR"])
+        env = PointParticleRandomWalkVelocity(equivariant=train_config["EQUIVARIANT"], terminate_on_error=train_config["TERMINATE_ON_ERROR"], reward_q_pos=train_config["REWARD_Q_POS"], reward_q_vel=train_config["REWARD_Q_VEL"], reward_r=train_config["REWARD_R"], reward_reach=train_config["REWARD_REACH"],
+                                           termination_bound=train_config["TERMINATION_BOUND"], terminal_reward=train_config["TERMINAL_REWARD"], state_cov_scalar=train_config["STATE_COV_SCALAR"], ref_cov_scalar=train_config["REF_COV_SCALAR"], use_des_action_in_reward=train_config["USE_DES_ACTION_IN_REWARD"])
     elif args.env_name == "random_walk_accel":
-        env = PointParticleRandomWalkAccel(equivariant=train_config["EQUIVARIANT"], terminate_on_error=train_config["TERMINATE_ON_ERROR"], reward_q=train_config["REWARD_Q"], reward_r=train_config["REWARD_R"], reward_reach=train_config["REWARD_REACH"],
-                                           termination_bound=train_config["TERMINATION_BOUND"], terminal_reward=train_config["TERMINAL_REWARD"], state_cov_scalar=train_config["STATE_COV_SCALAR"], ref_cov_scalar=train_config["REF_COV_SCALAR"])
+        env = PointParticleRandomWalkAccel(equivariant=train_config["EQUIVARIANT"], terminate_on_error=train_config["TERMINATE_ON_ERROR"], reward_q_pos=train_config["REWARD_Q_POS"], reward_q_vel=train_config["REWARD_Q_VEL"], reward_r=train_config["REWARD_R"], reward_reach=train_config["REWARD_REACH"],
+                                           termination_bound=train_config["TERMINATION_BOUND"], terminal_reward=train_config["TERMINAL_REWARD"], state_cov_scalar=train_config["STATE_COV_SCALAR"], ref_cov_scalar=train_config["REF_COV_SCALAR"], use_des_action_in_reward=train_config["USE_DES_ACTION_IN_REWARD"])
+    elif args.env_name == "random_lissajous":
+        env = PointParticleLissajousTracking(equivariant=train_config["EQUIVARIANT"], terminate_on_error=train_config["TERMINATE_ON_ERROR"], reward_q_pos=train_config["REWARD_Q_POS"], reward_q_vel=train_config["REWARD_Q_VEL"], reward_r=train_config["REWARD_R"], reward_reach=train_config["REWARD_REACH"],
+                                           termination_bound=train_config["TERMINATION_BOUND"], terminal_reward=train_config["TERMINAL_REWARD"], state_cov_scalar=train_config["STATE_COV_SCALAR"], ref_cov_scalar=train_config["REF_COV_SCALAR"], use_des_action_in_reward=train_config["USE_DES_ACTION_IN_REWARD"])
     else:
         raise ValueError("Invalid environment name")
     
@@ -129,12 +132,22 @@ if __name__ == "__main__":
 
     # (timesteps for each env, num_envs, data_size)
     pos = env_states.pos # This is of shape (100, 5, 3)
+    vel = env_states.vel
     ref_pos = env_states.ref_pos # This is of shape (100, 5, 3)
+    ref_vel = env_states.ref_vel
+    try:
+        ref_acc = env_states.ref_acc
+    except:
+        ref_acc = np.zeros_like(env_states.ref_acc)
 
     anim_pos_data = np.array(pos)
     anim_ref_pos_data = np.array(ref_pos)
+
     np.save(save_path_base + "/pos_data.npy", pos)
     np.save(save_path_base + "/ref_pos_data.npy", ref_pos)
+    np.save(save_path_base + "/vel_data.npy", vel)
+    np.save(save_path_base + "/ref_vel_data.npy", ref_vel)
+    np.save(save_path_base + "/ref_acc_data.npy", ref_acc)
 
     import matplotlib.pyplot as plt
 
@@ -149,11 +162,22 @@ if __name__ == "__main__":
 
         fig = plt.figure()
 
-        def animate_scatters(frame, anim_pos_data, anim_ref_pos_data, scatter_points):
+        def animate_scatters(frame, anim_pos_data, anim_ref_pos_data, scatter_points, color_list):
             
-            for i in range(anim_pos_data[0].shape[0]):
+            for color, i in zip(color_list, range(anim_pos_data[0].shape[0])):
+
+                if frame > 2:
+                    ax.plot((anim_pos_data[frame][i, 0], anim_pos_data[frame-1][i, 0]), (anim_pos_data[frame][i, 1], anim_pos_data[frame-1][i, 1]), (anim_pos_data[frame][i, 2], anim_pos_data[frame-1][i, 2]), ":", c=color, linewidth=0.25,)
+
                 scatter_points[0][i]._offsets3d = (anim_pos_data[frame][i,0:1], anim_pos_data[frame][i,1:2], anim_pos_data[frame][i,2:])
-                scatter_points[1][i]._offsets3d = (anim_ref_pos_data[frame][i,0:1], anim_ref_pos_data[frame][i,1:2], anim_ref_pos_data[frame][i,2:])
+
+                try:
+                    for frame_id in range(1, 10):
+                        scatter_points[frame_id][i]._offsets3d = (anim_pos_data[frame-frame_id][i,0:1], anim_pos_data[frame-frame_id][i,1:2], anim_pos_data[frame-frame_id][i,2:])
+                except:
+                    pass
+
+                scatter_points[10][i]._offsets3d = (anim_ref_pos_data[frame][i,0:1], anim_ref_pos_data[frame][i,1:2], anim_ref_pos_data[frame][i,2:])
 
                 dyn_axis_limit = [
                     (min(-5., anim_pos_data[frame, :, 0].min()), max(5., anim_pos_data[frame, :, 0].max()) ),
@@ -165,9 +189,9 @@ if __name__ == "__main__":
                 scatter_points[0][i]._axes.set_ylim(dyn_axis_limit[1][0], dyn_axis_limit[1][1])
                 scatter_points[0][i]._axes.set_zlim(dyn_axis_limit[2][0], dyn_axis_limit[2][1])
 
-                scatter_points[1][i]._axes.set_xlim(dyn_axis_limit[0][0], dyn_axis_limit[0][1])
-                scatter_points[1][i]._axes.set_ylim(dyn_axis_limit[1][0], dyn_axis_limit[1][1])
-                scatter_points[1][i]._axes.set_zlim(dyn_axis_limit[2][0], dyn_axis_limit[2][1])
+                scatter_points[10][i]._axes.set_xlim(dyn_axis_limit[0][0], dyn_axis_limit[0][1])
+                scatter_points[10][i]._axes.set_ylim(dyn_axis_limit[1][0], dyn_axis_limit[1][1])
+                scatter_points[10][i]._axes.set_zlim(dyn_axis_limit[2][0], dyn_axis_limit[2][1])
             return scatter_points
 
         print("Animating trajectories.....")
@@ -178,7 +202,16 @@ if __name__ == "__main__":
         color_list = cm.rainbow(np.linspace(0, 1, anim_pos_data[0].shape[0]))
 
         scatter_points = ([ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.4) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
-                          [ax.scatter(anim_ref_pos_data[0][i, 0:1], anim_ref_pos_data[0][i, 1:2], anim_ref_pos_data[0][i, 2:], color=color, marker="*", linewidth=0.4) for i, color in zip(range(anim_ref_pos_data[0].shape[0]), color_list)])
+                          [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
+                          [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
+                          [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
+                          [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
+                          [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
+                          [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
+                          [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
+                          [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
+                          [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
+                          [ax.scatter(anim_ref_pos_data[0][i, 0:1], anim_ref_pos_data[0][i, 1:2], anim_ref_pos_data[0][i, 2:], color=color, marker="*", linewidth=0.05) for i, color in zip(range(anim_ref_pos_data[0].shape[0]), color_list)])
         
 
         # Number of iterations
@@ -196,10 +229,12 @@ if __name__ == "__main__":
 
         ax.set_title('Particle Trajectory Animation')
 
-        ani = animation.FuncAnimation(fig, animate_scatters, total_frames, fargs=(anim_pos_data, anim_ref_pos_data, scatter_points),
+        ani = animation.FuncAnimation(fig, animate_scatters, total_frames, fargs=(anim_pos_data, anim_ref_pos_data, scatter_points, color_list),
                                         interval=50, blit=False)
 
         ani.save(save_path_base + "/paticle_animation.mp4", codec="libx264", bitrate=-1, fps=50, dpi=600)
+
+        plt.close()
 
     # colors = plt.cm.jet(jnp.linspace(0, 1, args.num_envs))
     default_colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
@@ -218,6 +253,11 @@ if __name__ == "__main__":
         color = default_colors[i % len(default_colors)]
         ax.scatter(pos[0, i, 0], pos[0, i, 1], pos[0, i, 2], label="Particle Start", marker=".", color=color)
         ax.plot(pos[:rollout_end, i, 0], pos[:rollout_end, i, 1], pos[:rollout_end, i, 2], label="Particle Position", color=color)
+
+        # Unit vel vectors denote the direction, placed at start pos
+        unit_vel = vel[0, i] / np.linalg.norm(vel[0, i])
+        ax.quiver(pos[0, i, 0], pos[0, i, 1], pos[0, i, 2], unit_vel[0], unit_vel[1], unit_vel[2], length=0.3, color="k",)
+
         # print("pos start: ", pos[0, i, :])
         # print("pos end: ", pos[rollout_end-1, i, :])
         if args.env_name == "position":
@@ -246,6 +286,12 @@ if __name__ == "__main__":
             # print("Ref end: ", ref_pos[rollout_end-1, i, :])
             ax.scatter(ref_pos[0, i, 0], ref_pos[0, i, 1], ref_pos[0, i, 2], label="Reference Position Start", marker='d', color=color)
             ax.scatter(ref_pos[rollout_end-1, i, 0], ref_pos[rollout_end-1, i, 1], ref_pos[rollout_end-1, i, 2], label="Reference Position End", marker='*', color=color)
+        elif args.env_name == "random_lissajous":
+            # Plot beginning and end of reference trajectory
+            # print("Ref start: ", ref_pos[0, i, :])
+            # print("Ref end: ", ref_pos[rollout_end-1, i, :])
+            ax.scatter(ref_pos[0, i, 0], ref_pos[0, i, 1], ref_pos[0, i, 2], label="Reference Position Start", marker='d', color=color)
+            ax.scatter(ref_pos[rollout_end-1, i, 0], ref_pos[rollout_end-1, i, 1], ref_pos[rollout_end-1, i, 2], label="Reference Position End", marker='*', color=color)
         else:
             raise ValueError("Invalid environment name")
     ax.set_xlabel("X")
@@ -256,6 +302,74 @@ if __name__ == "__main__":
     plt.tight_layout()
     plt.savefig(save_path_base+"/particle_position.png", dpi=1000)
     # plt.show()
+    plt.close()
+
+    for i in range(args.num_envs):
+        rollout_end = dones.shape[0]
+        for t in range(dones.shape[0]):
+            if dones[t, i]:
+                rollout_end = t
+                break
+        print(i, rollout_end)
+        
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+
+        # color = colors[i]
+        color = default_colors[i % len(default_colors)]
+        ax.scatter(pos[0, i, 0], pos[0, i, 1], pos[0, i, 2], label="Particle Start", marker=".", color=color)
+        ax.plot(pos[:rollout_end, i, 0], pos[:rollout_end, i, 1], pos[:rollout_end, i, 2], label="Particle Position", color=color)
+
+        # Unit vel vectors denote the direction, placed at start pos
+        unit_vel = vel[0, i] / np.linalg.norm(vel[0, i])
+        ax.quiver(pos[0, i, 0], pos[0, i, 1], pos[0, i, 2], unit_vel[0], unit_vel[1], unit_vel[2], length=0.3, color="k",)
+
+        # print("pos start: ", pos[0, i, :])
+        # print("pos end: ", pos[rollout_end-1, i, :])
+        if args.env_name == "position":
+            ax.scatter(ref_pos[0, i, 0], ref_pos[0, i, 1], ref_pos[0, i, 2], label="Reference Position", marker="*", color=color)
+        elif args.env_name == "constant_velocity":
+            # Plot beginning and end of reference trajectory
+            # print("Ref start: ", ref_pos[0, i, :])
+            # print("Ref end: ", ref_pos[rollout_end-1, i, :])
+            ax.scatter(ref_pos[0, i, 0], ref_pos[0, i, 1], ref_pos[0, i, 2], label="Reference Position Start", marker='d', color=color)
+            ax.scatter(ref_pos[rollout_end-1, i, 0], ref_pos[rollout_end-1, i, 1], ref_pos[rollout_end-1, i, 2], label="Reference Position End", marker='*', color=color)
+        elif args.env_name == "random_walk_position":
+            # Plot beginning and end of reference trajectory
+            # print("Ref start: ", ref_pos[0, i, :])
+            # print("Ref end: ", ref_pos[rollout_end-1, i, :])
+            ax.scatter(ref_pos[0, i, 0], ref_pos[0, i, 1], ref_pos[0, i, 2], label="Reference Position Start", marker='d', color=color)
+            ax.scatter(ref_pos[rollout_end-1, i, 0], ref_pos[rollout_end-1, i, 1], ref_pos[rollout_end-1, i, 2], label="Reference Position End", marker='*', color=color)
+        elif args.env_name == "random_walk_velocity":
+            # Plot beginning and end of reference trajectory
+            # print("Ref start: ", ref_pos[0, i, :])
+            # print("Ref end: ", ref_pos[rollout_end-1, i, :])
+            ax.scatter(ref_pos[0, i, 0], ref_pos[0, i, 1], ref_pos[0, i, 2], label="Reference Position Start", marker='d', color=color)
+            ax.scatter(ref_pos[rollout_end-1, i, 0], ref_pos[rollout_end-1, i, 1], ref_pos[rollout_end-1, i, 2], label="Reference Position End", marker='*', color=color)
+        elif args.env_name == "random_walk_accel":
+            # Plot beginning and end of reference trajectory
+            # print("Ref start: ", ref_pos[0, i, :])
+            # print("Ref end: ", ref_pos[rollout_end-1, i, :])
+            ax.scatter(ref_pos[0, i, 0], ref_pos[0, i, 1], ref_pos[0, i, 2], label="Reference Position Start", marker='d', color=color)
+            ax.scatter(ref_pos[rollout_end-1, i, 0], ref_pos[rollout_end-1, i, 1], ref_pos[rollout_end-1, i, 2], label="Reference Position End", marker='*', color=color)
+        elif args.env_name == "random_lissajous":
+            # Plot beginning and end of reference trajectory
+            # print("Ref start: ", ref_pos[0, i, :])
+            # print("Ref end: ", ref_pos[rollout_end-1, i, :])
+            ax.scatter(ref_pos[0, i, 0], ref_pos[0, i, 1], ref_pos[0, i, 2], label="Reference Position Start", marker='d', color=color)
+            ax.scatter(ref_pos[rollout_end-1, i, 0], ref_pos[rollout_end-1, i, 1], ref_pos[rollout_end-1, i, 2], label="Reference Position End", marker='*', color=color)
+        else:
+            raise ValueError("Invalid environment name")
+        
+        ax.set_xlabel("X")
+        ax.set_ylabel("Y")
+        ax.set_zlabel("Z")
+        # ax.legend()
+        plt.title(f"Particle Position Rollout for {args.num_envs} Environments \n Equivariant Model: {args.equivariant}")
+        plt.tight_layout()
+        plt.savefig(save_path_base + f"/particle_position_env_{i}.png", dpi=1000)
+        # plt.show()
+        plt.close()
 
 
     # Plot position and reference position in 3 axis for each env and save as N unique plots
@@ -282,9 +396,32 @@ if __name__ == "__main__":
         plt.ylabel("Z")
         plt.legend(loc="best")
         plt.xlabel("Timesteps")
-        plt.title(f"Particle Position Rollout for Env {i} \n Equivariant Model: {args.equivariant}")
+        plt.suptitle(f"Particle Position Rollout for Env {i} \n Equivariant Model: {args.equivariant}")
         plt.tight_layout()
         plt.savefig(save_path_base+f"/particle_position_env_{i}.png", dpi=1000)
+        plt.close()
+
+        fig = plt.figure()
+        plt.subplot(3, 1, 1)
+        plt.plot(jnp.arange(rollout_end), vel[:rollout_end, i, 0], label="Particle Velocity")
+        plt.plot(jnp.arange(rollout_end), ref_vel[:rollout_end, i, 0], label="Reference Velocity")
+        plt.ylabel("X")
+        plt.legend(loc="best")
+        plt.subplot(3, 1, 2)
+        plt.plot(jnp.arange(rollout_end), vel[:rollout_end, i, 1], label="Particle Velocity")
+        plt.plot(jnp.arange(rollout_end), ref_vel[:rollout_end, i, 1], label="Reference Velocity")
+        plt.ylabel("Y")
+        plt.legend(loc="best")
+        plt.subplot(3, 1, 3)
+        plt.plot(jnp.arange(rollout_end), vel[:rollout_end, i, 2], label="Particle Velocity")
+        plt.plot(jnp.arange(rollout_end), ref_vel[:rollout_end, i, 2], label="Reference Velocity")
+        plt.ylabel("Z")
+        plt.legend(loc="best")
+        plt.xlabel("Timesteps")
+        plt.suptitle(f"Particle Velocity Rollout for Env {i} \n Equivariant Model: {args.equivariant}")
+        plt.tight_layout()
+        plt.savefig(save_path_base+f"/particle_velocity_env_{i}.png", dpi=1000)
+        plt.close()
 
         plt.figure()
         plt.subplot(3,1,1)
@@ -304,23 +441,39 @@ if __name__ == "__main__":
         plt.tight_layout()
         plt.savefig(save_path_base+f"/actions_env_{i}.png", dpi=1000)
         # plt.show()
+        plt.close()
 
     # Make a plot that shows the error between the particle position and the reference position and averages over all envs with mean and std. dev. shown
-    errors = jnp.linalg.norm(pos - ref_pos, axis=-1)
-    mean_errors = jnp.mean(errors, axis=1)
-    std_errors = jnp.std(errors, axis=1)
+    pos_errors = jnp.linalg.norm(pos - ref_pos, axis=-1)
+    mean_pos_errors = jnp.mean(pos_errors, axis=1)
+    std_pos_errors = jnp.std(pos_errors, axis=1)
 
     plt.figure()
-    plt.plot(jnp.arange(rollout_end), mean_errors[:rollout_end], label="Mean Error")
-    plt.fill_between(jnp.arange(rollout_end), mean_errors[:rollout_end] - std_errors[:rollout_end], mean_errors[:rollout_end] + std_errors[:rollout_end], alpha=0.5)
+    plt.plot(jnp.arange(rollout_end), mean_pos_errors[:rollout_end], label="Mean Error")
+    plt.fill_between(jnp.arange(rollout_end), mean_pos_errors[:rollout_end] - std_pos_errors[:rollout_end], mean_pos_errors[:rollout_end] + std_pos_errors[:rollout_end], alpha=0.5)
     plt.xlabel("Timesteps")
     plt.ylabel("Error")
     plt.legend()
-    plt.title(f"Mean Error Between Particle Position and Reference Position \n  {args.num_envs} Seeds averaged, Equivariant Model: {args.equivariant}")
+    plt.title(f"Mean Error Between Particle Velocity and Reference Velocity \n  {args.num_envs} Seeds averaged, Equivariant Model: {args.equivariant}")
     plt.tight_layout()
-    plt.savefig(save_path_base+"/mean_error.png", dpi=1000)
+    plt.savefig(save_path_base+"/mean_pos_error.png", dpi=1000)
     # plt.show()
+    plt.close()
 
+    vel_errors = jnp.linalg.norm(vel - ref_vel, axis=-1)
+    mean_vel_errors = jnp.mean(vel_errors, axis=1)
+    std_vel_errors = jnp.std(vel_errors, axis=1)
+
+    plt.figure()
+    plt.plot(jnp.arange(rollout_end), mean_vel_errors[:rollout_end], label="Mean Error")
+    plt.fill_between(jnp.arange(rollout_end), mean_vel_errors[:rollout_end] - std_vel_errors[:rollout_end], mean_vel_errors[:rollout_end] + std_vel_errors[:rollout_end], alpha=0.5)
+    plt.xlabel("Timesteps")
+    plt.ylabel("Error")
+    plt.legend()
+    plt.title(f"Mean Error Between Particle Velocity and Reference Velocity \n  {args.num_envs} Seeds averaged, Equivariant Model: {args.equivariant}")
+    plt.tight_layout()
+    plt.savefig(save_path_base+"/mean_vel_error.png", dpi=1000)
+    plt.close()
 
     # Plot reward curves for each env
     plt.figure()
@@ -337,3 +490,4 @@ if __name__ == "__main__":
     plt.title(f"Reward Curves for {args.num_envs} Environments \n Equivariant Model: {args.equivariant}")
     plt.tight_layout()
     plt.savefig(save_path_base+"/rewards.png", dpi=1000)
+    plt.close()
