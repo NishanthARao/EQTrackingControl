@@ -346,6 +346,7 @@ class PointParticleRandomWalkVelocity(PointParticleBase):
 
         _, acc_key = jrandom.split(state.rnd_key)
         #ref_acc = jrandom.multivariate_normal(acc_key, jnp.zeros(3,), 0.5 * jnp.eye(3,))
+        
         # Truncate reference acceleration to [-1, 1]
         ref_acc = jrandom.truncated_normal(acc_key, lower=-1.0, upper=1.0)
 
