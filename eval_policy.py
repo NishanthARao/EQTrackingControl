@@ -93,7 +93,7 @@ if __name__ == "__main__":
     # print("\n\n\n")
 
     # Define the model
-    model = ActorCritic(action_dim=3, activation=train_config.get("ACTIVATION", "tanh"), num_layers=train_config.get("NUM_LAYERS", 3), num_nodes=train_config.get("NUM_NODES", 64))
+    model = ActorCritic(action_dim=3, activation=train_config.get("ACTIVATION", "tanh"), num_layers=train_config.get("NUM_LAYERS", 3), num_nodes=train_config.get("NUM_NODES", 64), out_activation=train_config.get("OUT_ACTIVATION", "hard_tanh"))
     model.init(rng, jnp.zeros((1, 3)))
 
 

@@ -28,7 +28,7 @@ p_eq_data_path = data_dir + env_name + "_p_equivariant/training_data.npz"
 v_eq_data_path = data_dir + env_name + "_v_equivariant/training_data.npz"
 pv_eq_data_path = data_dir + env_name + "_pv_equivariant/training_data.npz"
 try:
-    pva_eq_data_path = data_dir + env_name + "_pva_equivariant/training_data.npz"
+    pva_eq_data_path = "./checkpoints/" + env_name + "_pva_equivariant/training_data.npz"
 except:
     pva_eq_data_path = None
 # eq_data_path = "./checkpoints/constant_velocity_eq_50M_1/training_data.npz"
@@ -39,7 +39,7 @@ v_eq_data = np.load(v_eq_data_path)
 pv_eq_data = np.load(pv_eq_data_path)
 non_eq_data = np.load(non_eq_data_path)
 if pva_eq_data_path is not None:
-    pva_eq_data = np.load(pv_eq_data_path)
+    pva_eq_data = np.load(pva_eq_data_path)
 
 
 p_eq_args = None
