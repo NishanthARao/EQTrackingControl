@@ -91,7 +91,7 @@ ax.set_title(f"Reward Curve: {p_eq_args['env_name']} \n PPO JAX 3 Layer Policy A
 
 # # draw a bbox of the region of the inset axes in the parent axes and connecting lines between the bbox and the inset axes area
 # mark_inset(ax, axins, loc1=2, loc2=4, fc="none", ec="0.5")
-plt.savefig(data_dir + "_eq_vs_no_eq_rewards.png", dpi=1000)
+plt.savefig(data_dir + env_name + "_eq_vs_no_eq_rewards.png", dpi=1000)
 
 
 plt.figure()
@@ -114,7 +114,7 @@ plt.grid(True)
 plt.legend(loc="best")
 plt.gca().xaxis.set_major_formatter(FuncFormatter(lambda x,_: f"{int(x/1e6)}M"))
 plt.title(f"Agent Timesteps: {p_eq_args['env_name']} \n PPO JAX 3 Layer Policy Averaged over {p_eq_args['num_seeds']} Seeds \n {p_eq_args['NUM_ENVS']} Envs {p_eq_args['NUM_STEPS']} Steps {p_eq_args['TOTAL_TIMESTEPS']:.2E} Steps")
-plt.savefig(data_dir + "_eq_vs_no_eq_timesteps.png", dpi=1000)
+plt.savefig(data_dir + env_name + "_eq_vs_no_eq_timesteps.png", dpi=1000)
 
 
 # Compare reward plots
@@ -241,7 +241,7 @@ plt.grid("True")
 plt.legend()
 plt.title(f"Mean Error Between Particle Position and Reference Position")
 plt.tight_layout()
-plt.savefig(data_dir + env_name +"/compare_mean_pos_error.png", dpi=1000)
+plt.savefig(data_dir + env_name +"_compare_mean_pos_error.png", dpi=1000)
 # plt.show()
 plt.close()
 
@@ -267,6 +267,6 @@ plt.grid("True")
 plt.legend()
 plt.title(f"Mean Error Between Particle Velocity and Reference Velocity")
 plt.tight_layout()
-plt.savefig(data_dir + env_name + "/compare_mean_vel_error.png", dpi=1000)
+plt.savefig(data_dir + env_name + "_compare_mean_vel_error.png", dpi=1000)
 # plt.show()
 plt.close()
