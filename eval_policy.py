@@ -135,10 +135,20 @@ if __name__ == "__main__":
     vel = env_states.vel
     ref_pos = env_states.ref_pos # This is of shape (100, 5, 3)
     ref_vel = env_states.ref_vel
+    #lqr_cmd = env_states.lqr_cmd
     try:
         ref_acc = env_states.ref_acc
     except:
         ref_acc = np.zeros_like(env_states.ref_acc)
+
+    try:
+        amplitudes = env_states.amplitudes
+        frequencies = env_states.frequencies
+        phases = env_states.phases
+    except:
+        amplitudes = None
+        frequencies = None
+        phases = None
 
     anim_pos_data = np.array(pos)
     anim_ref_pos_data = np.array(ref_pos)
@@ -157,8 +167,8 @@ if __name__ == "__main__":
         import matplotlib.animation as animation
         from matplotlib.pyplot import cm
 
-        anim_pos_data = anim_pos_data[:500, ...]
-        anim_ref_pos_data = anim_ref_pos_data[:500, ...]
+        anim_pos_data = anim_pos_data[:1000, ...]
+        anim_ref_pos_data = anim_ref_pos_data[:1000, ...]
 
         fig = plt.figure()
 
@@ -167,17 +177,20 @@ if __name__ == "__main__":
             for color, i in zip(color_list, range(anim_pos_data[0].shape[0])):
 
                 if frame > 2:
-                    ax.plot((anim_pos_data[frame][i, 0], anim_pos_data[frame-1][i, 0]), (anim_pos_data[frame][i, 1], anim_pos_data[frame-1][i, 1]), (anim_pos_data[frame][i, 2], anim_pos_data[frame-1][i, 2]), ":", c=color, linewidth=0.25,)
+                    ax.plot((anim_pos_data[frame][i, 0], anim_pos_data[frame-1][i, 0]), (anim_pos_data[frame][i, 1], anim_pos_data[frame-1][i, 1]), (anim_pos_data[frame][i, 2], anim_pos_data[frame-1][i, 2]), ":", c=color, linewidth=0.5,)
 
                 scatter_points[0][i]._offsets3d = (anim_pos_data[frame][i,0:1], anim_pos_data[frame][i,1:2], anim_pos_data[frame][i,2:])
 
-                try:
-                    for frame_id in range(1, 10):
-                        scatter_points[frame_id][i]._offsets3d = (anim_pos_data[frame-frame_id][i,0:1], anim_pos_data[frame-frame_id][i,1:2], anim_pos_data[frame-frame_id][i,2:])
-                except:
-                    pass
+                # Uncomment if you want the dynamic trail
+                # try:
+                #     for frame_id in range(1, 10):
+                #         scatter_points[frame_id][i]._offsets3d = (anim_pos_data[frame-frame_id][i,0:1], anim_pos_data[frame-frame_id][i,1:2], anim_pos_data[frame-frame_id][i,2:])
+                # except:
+                #     pass
+                #scatter_points[10][i]._offsets3d = (anim_ref_pos_data[frame][i,0:1], anim_ref_pos_data[frame][i,1:2], anim_ref_pos_data[frame][i,2:])
 
-                scatter_points[10][i]._offsets3d = (anim_ref_pos_data[frame][i,0:1], anim_ref_pos_data[frame][i,1:2], anim_ref_pos_data[frame][i,2:])
+                # Uncomment if you don't want the dynamic trail
+                scatter_points[1][i]._offsets3d = (anim_ref_pos_data[frame][i,0:1], anim_ref_pos_data[frame][i,1:2], anim_ref_pos_data[frame][i,2:])
 
                 dyn_axis_limit = [
                     (min(-5., anim_pos_data[frame, :, 0].min()), max(5., anim_pos_data[frame, :, 0].max()) ),
@@ -189,9 +202,15 @@ if __name__ == "__main__":
                 scatter_points[0][i]._axes.set_ylim(dyn_axis_limit[1][0], dyn_axis_limit[1][1])
                 scatter_points[0][i]._axes.set_zlim(dyn_axis_limit[2][0], dyn_axis_limit[2][1])
 
-                scatter_points[10][i]._axes.set_xlim(dyn_axis_limit[0][0], dyn_axis_limit[0][1])
-                scatter_points[10][i]._axes.set_ylim(dyn_axis_limit[1][0], dyn_axis_limit[1][1])
-                scatter_points[10][i]._axes.set_zlim(dyn_axis_limit[2][0], dyn_axis_limit[2][1])
+                # Uncomment if you want the dynamic trail
+                # scatter_points[10][i]._axes.set_xlim(dyn_axis_limit[0][0], dyn_axis_limit[0][1])
+                # scatter_points[10][i]._axes.set_ylim(dyn_axis_limit[1][0], dyn_axis_limit[1][1])
+                # scatter_points[10][i]._axes.set_zlim(dyn_axis_limit[2][0], dyn_axis_limit[2][1])
+
+                # Uncomment if you don't want the dynamic trail
+                scatter_points[1][i]._axes.set_xlim(dyn_axis_limit[0][0], dyn_axis_limit[0][1])
+                scatter_points[1][i]._axes.set_ylim(dyn_axis_limit[1][0], dyn_axis_limit[1][1])
+                scatter_points[1][i]._axes.set_zlim(dyn_axis_limit[2][0], dyn_axis_limit[2][1])
             return scatter_points
 
         print("Animating trajectories.....")
@@ -201,16 +220,18 @@ if __name__ == "__main__":
 
         color_list = cm.rainbow(np.linspace(0, 1, anim_pos_data[0].shape[0]))
 
+        # Uncomment if you want a dynamic trail behined the particle
+        # But it looks a "little wrong", with the dotted-line trail, so for now it's uncommented
         scatter_points = ([ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.4) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
-                          [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
-                          [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
-                          [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
-                          [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
-                          [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
-                          [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
-                          [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
-                          [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
-                          [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
+                        #   [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
+                        #   [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
+                        #   [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
+                        #   [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
+                        #   [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
+                        #   [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
+                        #   [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
+                        #   [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
+                        #   [ax.scatter(anim_pos_data[0][i, 0:1], anim_pos_data[0][i, 1:2], anim_pos_data[0][i, 2:], color=color, marker=".", linewidth=0.05) for i, color in zip(range(anim_pos_data[0].shape[0]), color_list)],
                           [ax.scatter(anim_ref_pos_data[0][i, 0:1], anim_ref_pos_data[0][i, 1:2], anim_ref_pos_data[0][i, 2:], color=color, marker="*", linewidth=0.05) for i, color in zip(range(anim_ref_pos_data[0].shape[0]), color_list)])
         
 
@@ -227,7 +248,7 @@ if __name__ == "__main__":
         #ax.set_zlim3d([-5, 5])
         ax.set_zlabel('z-axis')
 
-        ax.set_title('Particle Trajectory Animation')
+        ax.set_title(f'Particle Trajectory Animation \n Equivariant: {args.equivariant}')
 
         ani = animation.FuncAnimation(fig, animate_scatters, total_frames, fargs=(anim_pos_data, anim_ref_pos_data, scatter_points, color_list),
                                         interval=50, blit=False)
@@ -310,7 +331,7 @@ if __name__ == "__main__":
             if dones[t, i]:
                 rollout_end = t
                 break
-        print(i, rollout_end)
+        #print(i, rollout_end)
         
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
@@ -365,9 +386,15 @@ if __name__ == "__main__":
         ax.set_ylabel("Y")
         ax.set_zlabel("Z")
         # ax.legend()
-        plt.title(f"Particle Position Rollout for {args.num_envs} Environments \n Equivariant Model: {args.equivariant}")
+        #print(amplitudes.shape)
+        if amplitudes is not None:
+            title_string = f"Particle Position Rollout for {args.num_envs} Environments. Equivariant Model: {args.equivariant} \n Amplitudes: {amplitudes[-1, i, 0]:.1f}, {amplitudes[-1, i, 1]:.1f}, {amplitudes[-1, i, 2]:.1f} \n frequencies: {frequencies[-1, i, 0]:.3f}, {frequencies[-1, i, 1]:.3f}, {frequencies[-1, i, 2]:.3f}"
+        else:
+            title_string = f"Particle Position Rollout for {args.num_envs} Environments. Equivariant Model: {args.equivariant}"
+        plt.title(title_string)
         plt.tight_layout()
-        plt.savefig(save_path_base + f"/particle_position_env_{i}.png", dpi=1000)
+        plt.savefig(save_path_base + f"/particle_3d_position_env_{i}.png", dpi=1000)
+        plt.grid(True)
         # plt.show()
         plt.close()
 
@@ -383,16 +410,19 @@ if __name__ == "__main__":
         plt.subplot(3, 1, 1)
         plt.plot(jnp.arange(rollout_end), pos[:rollout_end, i, 0], label="Particle Position")
         plt.plot(jnp.arange(rollout_end), ref_pos[:rollout_end, i, 0], label="Reference Position")
+        plt.grid("True")
         plt.ylabel("X")
         plt.legend(loc="best")
         plt.subplot(3, 1, 2)
         plt.plot(jnp.arange(rollout_end), pos[:rollout_end, i, 1], label="Particle Position")
         plt.plot(jnp.arange(rollout_end), ref_pos[:rollout_end, i, 1], label="Reference Position")
+        plt.grid("True")
         plt.ylabel("Y")
         plt.legend(loc="best")
         plt.subplot(3, 1, 3)
         plt.plot(jnp.arange(rollout_end), pos[:rollout_end, i, 2], label="Particle Position")
         plt.plot(jnp.arange(rollout_end), ref_pos[:rollout_end, i, 2], label="Reference Position")
+        plt.grid("True")
         plt.ylabel("Z")
         plt.legend(loc="best")
         plt.xlabel("Timesteps")
@@ -405,16 +435,19 @@ if __name__ == "__main__":
         plt.subplot(3, 1, 1)
         plt.plot(jnp.arange(rollout_end), vel[:rollout_end, i, 0], label="Particle Velocity")
         plt.plot(jnp.arange(rollout_end), ref_vel[:rollout_end, i, 0], label="Reference Velocity")
+        plt.grid("True")
         plt.ylabel("X")
         plt.legend(loc="best")
         plt.subplot(3, 1, 2)
         plt.plot(jnp.arange(rollout_end), vel[:rollout_end, i, 1], label="Particle Velocity")
         plt.plot(jnp.arange(rollout_end), ref_vel[:rollout_end, i, 1], label="Reference Velocity")
+        plt.grid("True")
         plt.ylabel("Y")
         plt.legend(loc="best")
         plt.subplot(3, 1, 3)
         plt.plot(jnp.arange(rollout_end), vel[:rollout_end, i, 2], label="Particle Velocity")
         plt.plot(jnp.arange(rollout_end), ref_vel[:rollout_end, i, 2], label="Reference Velocity")
+        plt.grid("True")
         plt.ylabel("Z")
         plt.legend(loc="best")
         plt.xlabel("Timesteps")
@@ -425,15 +458,21 @@ if __name__ == "__main__":
 
         plt.figure()
         plt.subplot(3,1,1)
-        plt.plot(jnp.arange(rollout_end), actions[:rollout_end, i, 0], label="Action X")
+        plt.plot(jnp.arange(rollout_end), actions[:rollout_end, i, 0], label="PPO")
+        #plt.plot(jnp.arange(rollout_end), lqr_cmd[:rollout_end, i, 0], label="LQR")
+        plt.grid("True")
         plt.legend()
         plt.ylabel("Action X")
         plt.subplot(3,1,2)
-        plt.plot(jnp.arange(rollout_end), actions[:rollout_end, i, 1], label="Action Y")
+        plt.plot(jnp.arange(rollout_end), actions[:rollout_end, i, 1], label="PPO")
+        #plt.plot(jnp.arange(rollout_end), lqr_cmd[:rollout_end, i, 1], label="LQR")
+        plt.grid("True")
         plt.ylabel("Action Y")
         plt.legend()
         plt.subplot(3,1,3)
-        plt.plot(jnp.arange(rollout_end), actions[:rollout_end, i, 2], label="Action Z")
+        plt.plot(jnp.arange(rollout_end), actions[:rollout_end, i, 2], label="PPO")
+        #plt.plot(jnp.arange(rollout_end), lqr_cmd[:rollout_end, i, 2], label="LQR")
+        plt.grid("True")
         plt.legend()
         plt.xlabel("Timesteps")
         plt.ylabel("Action Z")
@@ -453,6 +492,7 @@ if __name__ == "__main__":
     plt.fill_between(jnp.arange(rollout_end), mean_pos_errors[:rollout_end] - std_pos_errors[:rollout_end], mean_pos_errors[:rollout_end] + std_pos_errors[:rollout_end], alpha=0.5)
     plt.xlabel("Timesteps")
     plt.ylabel("Error")
+    plt.grid("True")
     plt.legend()
     plt.title(f"Mean Error Between Particle Velocity and Reference Velocity \n  {args.num_envs} Seeds averaged, Equivariant Model: {args.equivariant}")
     plt.tight_layout()
@@ -469,6 +509,7 @@ if __name__ == "__main__":
     plt.fill_between(jnp.arange(rollout_end), mean_vel_errors[:rollout_end] - std_vel_errors[:rollout_end], mean_vel_errors[:rollout_end] + std_vel_errors[:rollout_end], alpha=0.5)
     plt.xlabel("Timesteps")
     plt.ylabel("Error")
+    plt.grid("True")
     plt.legend()
     plt.title(f"Mean Error Between Particle Velocity and Reference Velocity \n  {args.num_envs} Seeds averaged, Equivariant Model: {args.equivariant}")
     plt.tight_layout()
@@ -486,6 +527,7 @@ if __name__ == "__main__":
         plt.plot(jnp.arange(rollout_end), rewards[:rollout_end, i], label=f"Env {i}")
     plt.xlabel("Timesteps")
     plt.ylabel("Reward")
+    plt.grid(True)
     plt.legend()
     plt.title(f"Reward Curves for {args.num_envs} Environments \n Equivariant Model: {args.equivariant}")
     plt.tight_layout()

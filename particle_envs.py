@@ -32,7 +32,8 @@ class PointParticlePosition(PointParticleBase):
         action = jnp.clip(action, -1., 1.)
 
         state = env_state
-
+        ref_acc = env_state.ref_acc
+        lqr_cmd = state.lqr_cmd
         # update particle position
         vel = state.vel + action * self.dt
         pos = state.pos + vel * self.dt
@@ -46,7 +47,13 @@ class PointParticlePosition(PointParticleBase):
 
         done = self._is_terminal(env_state)
 
-        env_state = PointState(pos=pos, vel=vel, ref_pos=ref_pos, ref_vel=ref_vel, time=time)
+        #jax.debug.print("K = {K}", K=self.K)
+        e_vec = jnp.hstack((ref_pos, ref_vel)).reshape(6, 1) - jnp.hstack((pos, vel)).reshape(6, 1)
+        #jax.debug.print("e_vec: {e_vec}", e_vec=e_vec)
+        lqr_cmd = (self.gamma * self.K @ e_vec).squeeze()
+        #lqr_cmd = self.gamma * self.K @ (jnp.vstack((ref_pos, ref_vel)) - jnp.vstack(pos, vel))
+
+        env_state = PointState(pos=pos, vel=vel, ref_pos=ref_pos, ref_vel=ref_vel, time=time, ref_acc=ref_acc, lqr_cmd=lqr_cmd)
 
         # Reset the environment if the episode is done
         # new_env_state = self._reset(key)
@@ -67,6 +74,8 @@ class PointParticlePosition(PointParticleBase):
             return non_eq_state
         else:
             eq_state = jnp.hstack([state.pos - state.ref_pos, state.vel - state.ref_vel])
+            #eq_state = jnp.hstack([state.pos - state.ref_pos, state.vel, state.ref_vel])
+            #eq_state = jnp.hstack([state.pos, state.ref_pos, state.vel - state.ref_vel])
             return eq_state
 
     def _reset(self, key):
@@ -84,10 +93,12 @@ class PointParticlePosition(PointParticleBase):
         #                    lambda _: jrandom.multivariate_normal(key, self.ref_mean, self.ref_cov), 
         #                    lambda _: predefined_ref_pos, None)
         ref_vel = jnp.zeros(3) # hard coded to be non moving
+        ref_acc = jnp.zeros(3)
         time = 0.0
         new_key = jrandom.split(key)[0]
+        lqr_cmd = jnp.zeros(3)
 
-        new_point_state = PointState(pos=pos, vel=vel, ref_pos=ref_pos, ref_vel=ref_vel, time=time)
+        new_point_state = PointState(pos=pos, vel=vel, ref_pos=ref_pos, ref_vel=ref_vel, lqr_cmd=lqr_cmd, ref_acc=ref_acc, time=time)
 
         return new_point_state
 
@@ -106,6 +117,7 @@ class PointParticlePosition(PointParticleBase):
     
     def observation_space(self) -> spaces.Box:
         n_obs = 6 if self.equivariant else 12 # this ONLY works since this is dependent on a constructor arg but this is bad behavior. 
+        #n_obs = 9 if self.equivariant else 12 # this ONLY works since this is dependent on a constructor arg but this is bad behavior. 
         low = jnp.array(n_obs*[-jnp.finfo(jnp.float32).max])
         high = jnp.array(n_obs*[jnp.finfo(jnp.float32).max])
 
@@ -166,6 +178,7 @@ class PointParticleConstantVelocity(PointParticleBase):
             return non_eq_state
         else:
             eq_state = jnp.hstack([state.pos - state.ref_pos, state.vel - state.ref_vel, state.ref_acc])
+            #eq_state = jnp.hstack([state.pos, state.ref_pos, state.vel - state.ref_vel, state.ref_acc])
             return eq_state
 
     def _reset(self, key):
@@ -188,7 +201,7 @@ class PointParticleConstantVelocity(PointParticleBase):
         time = 0.0
         new_key = jrandom.split(key)[0]
 
-        new_point_state = PointVelocityState(pos=pos, vel=vel, ref_pos=ref_pos, ref_vel=ref_vel, ref_acc=ref_acc, time=time)
+        new_point_state = PointVelocityState(pos=pos, vel=vel, ref_pos=ref_pos, ref_vel=ref_vel, ref_acc=ref_acc, time=time,)
 
         return new_point_state
     
@@ -207,6 +220,7 @@ class PointParticleConstantVelocity(PointParticleBase):
     
     def observation_space(self) -> spaces.Box:
         n_obs = 9 if self.equivariant else 15
+        #n_obs = 12 if self.equivariant else 15
         low = jnp.array(n_obs*[-jnp.finfo(jnp.float32).max])
         high = jnp.array(n_obs*[jnp.finfo(jnp.float32).max])
 
@@ -270,6 +284,7 @@ class PointParticleRandomWalkPosition(PointParticleBase):
             return non_eq_state
         else:
             eq_state = jnp.hstack([state.pos - state.ref_pos, state.vel - state.ref_vel, state.ref_acc])
+            #eq_state = jnp.hstack([state.pos, state.ref_pos, state.vel - state.ref_vel, state.ref_acc])
             return eq_state
 
     def _reset(self, key):
@@ -311,6 +326,7 @@ class PointParticleRandomWalkPosition(PointParticleBase):
     
     def observation_space(self) -> spaces.Box:
         n_obs = 9 if self.equivariant else 15
+        #n_obs = 12 if self.equivariant else 15
         low = jnp.array(n_obs*[-jnp.finfo(jnp.float32).max])
         high = jnp.array(n_obs*[jnp.finfo(jnp.float32).max])
 
@@ -346,9 +362,9 @@ class PointParticleRandomWalkVelocity(PointParticleBase):
 
         _, acc_key = jrandom.split(state.rnd_key)
         #ref_acc = jrandom.multivariate_normal(acc_key, jnp.zeros(3,), 0.5 * jnp.eye(3,))
-        
+
         # Truncate reference acceleration to [-1, 1]
-        ref_acc = jrandom.truncated_normal(acc_key, lower=-1.0, upper=1.0)
+        ref_acc = jrandom.truncated_normal(acc_key, lower=-jnp.ones(3,), upper=jnp.ones(3,))
 
         ref_vel = state.ref_vel + ref_acc * self.dt
         ref_pos = state.ref_pos + ref_vel * self.dt
@@ -378,6 +394,7 @@ class PointParticleRandomWalkVelocity(PointParticleBase):
             return non_eq_state
         else:
             eq_state = jnp.hstack([state.pos - state.ref_pos, state.vel - state.ref_vel, state.ref_acc])
+            #eq_state = jnp.hstack([state.pos, state.ref_pos, state.vel - state.ref_vel, state.ref_acc])
             return eq_state
 
     def _reset(self, key):
@@ -396,7 +413,8 @@ class PointParticleRandomWalkVelocity(PointParticleBase):
         #                    lambda _: predefined_ref_pos, None)
         key, vel_key, acc_key = jrandom.split(key, 3)
         ref_vel = jrandom.multivariate_normal(vel_key, jnp.zeros(3,), jnp.eye(3,) * 0.5)
-        ref_acc = jrandom.multivariate_normal(acc_key, jnp.zeros(3,), jnp.eye(3,) * 0.5)
+        #ref_acc = jrandom.multivariate_normal(acc_key, jnp.zeros(3,), jnp.eye(3,) * 0.5)
+        ref_acc = jrandom.truncated_normal(acc_key, lower=-jnp.ones(3,), upper=jnp.ones(3,))
         time = 0.0
         new_key = jrandom.split(key)[0]
 
@@ -419,6 +437,7 @@ class PointParticleRandomWalkVelocity(PointParticleBase):
     
     def observation_space(self) -> spaces.Box:
         n_obs = 9 if self.equivariant else 15
+        #n_obs = 12 if self.equivariant else 15
         low = jnp.array(n_obs*[-jnp.finfo(jnp.float32).max])
         high = jnp.array(n_obs*[jnp.finfo(jnp.float32).max])
 
@@ -562,9 +581,13 @@ class PointParticleLissajousTracking(PointParticleBase):
         vel = jrandom.multivariate_normal(vel_key, jnp.zeros(3), self.state_cov)
 
 
-        amplitudes = jrandom.uniform(amp_key, (3,), minval=-5., maxval=5.)
-        frequencies = jrandom.uniform(freq_key, (3,), minval=0.05, maxval=0.1)
-        phases = jrandom.uniform(phase_key, (3,), minval=0., maxval=2.0 * jnp.pi)
+        # amplitudes = jrandom.uniform(amp_key, (3,), minval=-5., maxval=5.)
+        # frequencies = jrandom.uniform(freq_key, (3,), minval=0.01, maxval=0.05)
+        # phases = jrandom.uniform(phase_key, (3,), minval=0., maxval=2.0 * jnp.pi)
+
+        amplitudes = jnp.array([ 1.36172305,  2.68769884, -2.41660407])
+        frequencies = jnp.array([0.01837562, 0.02134107, 0.01045938])
+        phases = jnp.array([0.6374367 , 1.99830445, 0.79015325])
 
         time = 0.0
 
@@ -631,6 +654,7 @@ class PointParticleLissajousTracking(PointParticleBase):
             return non_eq_state
         else:
             eq_state = jnp.hstack([state.pos - state.ref_pos, state.vel - state.ref_vel, state.ref_acc])
+            #eq_state = jnp.hstack([state.pos - state.ref_pos, state.vel, state.ref_vel, state.ref_acc])
             return eq_state
     @property
     def name(self)-> str:
@@ -642,6 +666,7 @@ class PointParticleLissajousTracking(PointParticleBase):
 
     def observation_space(self) -> spaces.Box:
         n_obs = 9 if self.equivariant else 15
+        #n_obs = 12 if self.equivariant else 15
         low = jnp.array(n_obs*[-jnp.finfo(jnp.float32).max])
         high = jnp.array(n_obs*[jnp.finfo(jnp.float32).max])
 

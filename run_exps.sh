@@ -62,30 +62,32 @@ python3 train_policy.py --env-name constant_velocity --exp-name test_constant_ve
 sleep 2
 echo "==============================================================="
 
+#use --make-animation to also generate animation (albeit slow)
+
 echo "Running Evaluation Experiments...."
 echo "==============================================================="
-python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_position/model_final/ --env-name position --make-animation
+python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_position/model_final/ --env-name position
 sleep 2
 echo "==============================================================="
-python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_position_equivariant/model_final/ --env-name position --equivariant --make-animation
+python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_position_equivariant/model_final/ --env-name position --equivariant
 sleep 2
 echo "==============================================================="
-python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_constant_velocity/model_final/ --env-name constant_velocity --make-animation
+python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_constant_velocity/model_final/ --env-name constant_velocity
 sleep 2
 echo "==============================================================="
-python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_constant_velocity_equivariant/model_final/ --env-name constant_velocity --equivariant --make-animation
+python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_constant_velocity_equivariant/model_final/ --env-name constant_velocity --equivariant
 sleep 2
 echo "==============================================================="
-python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_random_walk_position/model_final/ --env-name random_walk_position --make-animation
+python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_random_walk_position/model_final/ --env-name random_walk_position
 sleep 2
 echo "==============================================================="
-python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_random_walk_position_equivariant/model_final/ --env-name random_walk_position --equivariant --make-animation
+python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_random_walk_position_equivariant/model_final/ --env-name random_walk_position --equivariant
 sleep 2
 echo "==============================================================="
-python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_random_walk_velocity/model_final/ --env-name random_walk_velocity --make-animation
+python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_random_walk_velocity/model_final/ --env-name random_walk_velocity
 sleep 2
 echo "==============================================================="
-python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_random_walk_velocity_equivariant/model_final/ --env-name random_walk_velocity --equivariant --make-animation
+python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_random_walk_velocity_equivariant/model_final/ --env-name random_walk_velocity --equivariant
 sleep 2
 echo "==============================================================="
 

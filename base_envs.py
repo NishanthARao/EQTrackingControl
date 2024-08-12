@@ -1,3 +1,5 @@
+import numpy as np
+import scipy.linalg
 from flax import struct
 import jax
 import jax.numpy as jnp
@@ -20,6 +22,8 @@ class PointState(EnvState):
     vel: jnp.ndarray
     ref_pos: jnp.ndarray
     ref_vel: jnp.ndarray
+    ref_acc: jnp.ndarray
+    lqr_cmd: jnp.ndarray
 
 @struct.dataclass
 class PointVelocityState(EnvState):
@@ -76,6 +80,24 @@ class PointParticleBase:
         self.epsilon_ball_radius = 1e-2
 
         self.other_args = kwargs
+
+        # For LQR calculations
+        A = np.eye(6,)
+        A[:3, 3:] = dt * np.eye(3,)
+
+        B = np.zeros((6, 3))
+        B[3:, :] = dt * np.eye(3,)
+
+        Q = 10 * np.eye(6)
+        R = 1 * np.eye(3)
+
+        self.gamma = 0.995
+
+        S = scipy.linalg.solve_discrete_are((self.gamma ** 0.5) * A, B, Q, 1/(self.gamma) * R)
+
+        K = np.linalg.inv(R + self.gamma * B.T @ S @ B) @ B.T @ S @ A
+
+        self.K = jnp.asarray(K)
 
     def _sample_random_ref_pos(self, key):
         """

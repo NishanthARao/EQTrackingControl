@@ -64,7 +64,6 @@ def make_train(config):
     checkpointer = orbax_cp.PyTreeCheckpointer()
 
 
-
     def linear_schedule(count):
         frac = (
             1.0
