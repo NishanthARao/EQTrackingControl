@@ -50,7 +50,7 @@ def make_train(config):
     elif config["env_name"] == "random_walk_position":
         env = PointParticleRandomWalkPosition(equivariant=config["EQUIVARIANT"], terminate_on_error=config["TERMINATE_ON_ERROR"], reward_q_pos=config["REWARD_Q_POS"], reward_q_vel=config["REWARD_Q_VEL"], reward_r=config["REWARD_R"], reward_reach=config["REWARD_REACH"],
                                            termination_bound=config["TERMINATION_BOUND"], terminal_reward=config["TERMINAL_REWARD"], state_cov_scalar=config["STATE_COV_SCALAR"], ref_cov_scalar=config["REF_COV_SCALAR"], use_des_action_in_reward=config["USE_DES_ACTION_IN_REWARD"])
-    elif config["env_name"] == "random_walk_velocity":
+    elif config["env_name"] == "random_walk_velocity" or "random_lissajous":
         env = PointParticleRandomWalkVelocity(equivariant=config["EQUIVARIANT"], terminate_on_error=config["TERMINATE_ON_ERROR"], reward_q_pos=config["REWARD_Q_POS"], reward_q_vel=config["REWARD_Q_VEL"], reward_r=config["REWARD_R"], reward_reach=config["REWARD_REACH"],
                                            termination_bound=config["TERMINATION_BOUND"], terminal_reward=config["TERMINAL_REWARD"], state_cov_scalar=config["STATE_COV_SCALAR"], ref_cov_scalar=config["REF_COV_SCALAR"], use_des_action_in_reward=config["USE_DES_ACTION_IN_REWARD"])
     elif config["env_name"] == "random_walk_accel":

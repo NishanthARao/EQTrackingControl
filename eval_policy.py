@@ -494,7 +494,7 @@ if __name__ == "__main__":
     plt.ylabel("Error")
     plt.grid("True")
     plt.legend()
-    plt.title(f"Mean Error Between Particle Velocity and Reference Velocity \n  {args.num_envs} Seeds averaged, Equivariant Model: {args.equivariant}")
+    plt.title(f"Mean Error Between Particle Position and Reference Position \n  {args.num_envs} Seeds averaged, Equivariant Model: {args.equivariant}")
     plt.tight_layout()
     plt.savefig(save_path_base+"/mean_pos_error.png", dpi=1000)
     # plt.show()

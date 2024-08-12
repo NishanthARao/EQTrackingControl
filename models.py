@@ -30,7 +30,7 @@ class ActorCritic(nn.Module):
 
         if self.out_activation == "hard_tanh":
             out_activation = nn.hard_tanh
-        if self.out_activation == "hard_tanh_scaled":
+        elif self.out_activation == "hard_tanh_scaled":
             out_activation = nn.hard_tanh_scaled
         else:
             raise ValueError("Invalid output activation function.")
@@ -41,7 +41,7 @@ class ActorCritic(nn.Module):
             actor_mean = activation(actor_mean)
         actor_mean = nn.Dense(self.action_dim, kernel_init=orthogonal(0.01), bias_init=constant(0.0))(actor_mean)
 
-        actor_mean = out_activation(actor_mean, min_val=-2, max_val=2.)
+        actor_mean = out_activation(actor_mean)
         # actor_mean = nn.Dense(64, kernel_init=orthogonal(np.sqrt(2)), bias_init=constant(0.0))(x)
         # actor_mean = activation(actor_mean)
         # actor_mean = nn.Dense(64, kernel_init=orthogonal(np.sqrt(2)), bias_init=constant(0.0))(actor_mean)
