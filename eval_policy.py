@@ -63,7 +63,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Evaluate a policy")
     parser.add_argument("--load-path", type=str, required=True, help="Path to the checkpoint to load")
     parser.add_argument("--num-envs", type=int, default=5, help="Number of environments to evaluate in parallel")
-    parser.add_argument("--equivariant", action="store_true", help="Whether to use the equivariant version of the environment")
+    parser.add_argument("--equivariant", type=int, help="Type of Equivariance:\n0 - No equivariance\n1 - Position Equivariance (P-error only)\n2 - Velocity Equivariance (V-error only)\n3 - Position and Velcoity Equivariance (PV - error)\n4 - Position, Velocity, Accel equivariance (PVA - error)")
     parser.add_argument("--seed", type=int, default=0, help="Seed to use for the evaluation")
     parser.add_argument("--num-timesteps", type=int, default=5000, help="Number of timesteps to run the evaluation for")
     parser.add_argument("--env-name", type=str, required=True, help="Name of the environment to use for evaluation. position (PointParticlePosition), constant_velocity (PointParticleConstantVelocity), random_walk_velocity (PointParticleRandomWalkVelocity), random_walk_accel (PointParticleRandomWalkAccel)")
