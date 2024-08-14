@@ -29,7 +29,7 @@ class PointParticlePosition(PointParticleBase):
         '''
 
         # clip action
-        action = jnp.clip(action, -1., 1.)
+        if self.clip_actions: action = jnp.clip(action, -1., 1.)
 
         state = env_state
         ref_acc = env_state.ref_acc
@@ -162,7 +162,7 @@ class PointParticleConstantVelocity(PointParticleBase):
         returns: tuple: (env_state, observation, reward, done, info)
         '''
         # clip action
-        action = jnp.clip(action, -1., 1.)
+        if self.clip_actions: action = jnp.clip(action, -1., 1.)
 
         state = env_state
         # update particle position
@@ -278,7 +278,7 @@ class PointParticleRandomWalkPosition(PointParticleBase):
         returns: tuple: (env_state, observation, reward, done, info)
         '''
         # clip action
-        action = jnp.clip(action, -1., 1.)
+        if self.clip_actions: action = jnp.clip(action, -1., 1.)
 
         state = env_state
         # update particle position
@@ -397,7 +397,7 @@ class PointParticleRandomWalkVelocity(PointParticleBase):
         '''
         # clip action
         if self.equivariant == 4: action = action + env_state.ref_acc
-        action = jnp.clip(action, -1., 1.)
+        if self.clip_actions: action = jnp.clip(action, -1., 1.)
 
         state = env_state
         # update particle position
@@ -673,7 +673,7 @@ class PointParticleLissajousTracking(PointParticleBase):
         '''
         # clip action
         if self.equivariant == 4: action = action + env_state.ref_acc
-        action = jnp.clip(action, -1., 1.)
+        if self.clip_actions: action = jnp.clip(action, -1., 1.)
 
         state = env_state
         # update particle position

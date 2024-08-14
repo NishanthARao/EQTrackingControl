@@ -67,6 +67,36 @@ echo "==============================================================="
 python3 train_policy.py --env-name random_walk_velocity --exp-name test_random_lissajous_pva_equivariant --equivariant 4 --out-activation hard_tanh_scaled --add-desc "PVA-Eq version, with termination on error and bad, good reward and random accel sampled each time instant, and desired action in the reward function, folder made for Lissajous PVA-Eq testing"
 sleep 2
 echo "==============================================================="
+python3 train_policy.py --env-name random_walk_velocity --exp-name test_random_walk_velocity_no_clip --dont-clip-actions --add-desc "Non-Eq version, with termination on error and bad, good reward and random accel sampled each time instant, and desired action in the reward function, No action clipping"
+sleep 2
+echo "==============================================================="
+python3 train_policy.py --env-name random_walk_velocity --exp-name test_random_walk_velocity_no_clip_p_equivariant --dont-clip-actions --equivariant 1 --add-desc "P-Eq version, with termination on error and bad, good reward and random accel sampled each time instant, and desired action in the reward function, No action clipping"
+sleep 2
+echo "==============================================================="
+python3 train_policy.py --env-name random_walk_velocity --exp-name test_random_walk_velocity_no_clip_v_equivariant --dont-clip-actions --equivariant 2 --add-desc "V-Eq version, with termination on error and bad, good reward and random accel sampled each time instant, and desired action in the reward function, No action clipping"
+sleep 2
+echo "==============================================================="
+python3 train_policy.py --env-name random_walk_velocity --exp-name test_random_walk_velocity_no_clip_pv_equivariant --dont-clip-actions --equivariant 3 --add-desc "PV-Eq version, with termination on error and bad, good reward and random accel sampled each time instant, and desired action in the reward function, No action clipping"
+sleep 2
+echo "==============================================================="
+python3 train_policy.py --env-name random_walk_velocity --exp-name test_random_walk_velocity_no_clip_pva_equivariant --dont-clip-actions --equivariant 4 --out-activation hard_tanh_scaled --add-desc "PVA-Eq version, with termination on error and bad, good reward and random accel sampled each time instant, and desired action in the reward function, No action clipping"
+sleep 2
+echo "==============================================================="
+python3 train_policy.py --env-name random_walk_velocity --exp-name test_random_lissajous_no_clip --dont-clip-actions --equivariant 0 --add-desc "Non-Eq version, with termination on error and bad, good reward and random accel sampled each time instant, and desired action in the reward function, folder made for Lissajous testing, No action clipping"
+sleep 2
+echo "==============================================================="
+python3 train_policy.py --env-name random_walk_velocity --exp-name test_random_lissajous_no_clip_p_equivariant --dont-clip-actions --equivariant 1 --add-desc "P-Eq version, with termination on error and bad, good reward and random accel sampled each time instant, and desired action in the reward function, folder made for Lissajous P-Eq testing, No action clipping"
+sleep 2
+echo "==============================================================="
+python3 train_policy.py --env-name random_walk_velocity --exp-name test_random_lissajous_no_clip_v_equivariant --dont-clip-actions --equivariant 2 --add-desc "V-Eq version, with termination on error and bad, good reward and random accel sampled each time instant, and desired action in the reward function, folder made for Lissajous V-Eq testing, No action clipping"
+sleep 2
+echo "==============================================================="
+python3 train_policy.py --env-name random_walk_velocity --exp-name test_random_lissajous_no_clip_pv_equivariant --dont-clip-actions --equivariant 3 --add-desc "PV-Eq version, with termination on error and bad, good reward and random accel sampled each time instant, and desired action in the reward function, folder made for Lissajous PV-Eq testing, No action clipping"
+sleep 2
+echo "==============================================================="
+python3 train_policy.py --env-name random_walk_velocity --exp-name test_random_lissajous_no_clip_pva_equivariant --dont-clip-actions --equivariant 4 --out-activation hard_tanh_scaled --add-desc "PVA-Eq version, with termination on error and bad, good reward and random accel sampled each time instant, and desired action in the reward function, folder made for Lissajous PVA-Eq testing, No action clipping"
+sleep 2
+echo "==============================================================="
 #use --make-animation to also generate animation (albeit slow)
 
 echo "==============================================================="
@@ -133,6 +163,33 @@ python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_random_lissajous_
 sleep 2
 echo "==============================================================="
 python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_random_lissajous_pva_equivariant/model_final/ --env-name random_lissajous --equivariant 4
+sleep 2
+echo "==============================================================="
+python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_random_walk_velocity_no_clip/model_final/ --env-name random_walk_velocity
+sleep 2
+echo "==============================================================="
+python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_random_walk_velocity_no_clip_p_equivariant/model_final/ --env-name random_walk_velocity --equivariant 1
+sleep 2
+echo "==============================================================="
+python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_random_walk_velocity_no_clip_v_equivariant/model_final/ --env-name random_walk_velocity --equivariant 2
+sleep 2
+echo "==============================================================="
+python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_random_walk_velocity_no_clip_pv_equivariant/model_final/ --env-name random_walk_velocity --equivariant 3
+sleep 2
+echo "==============================================================="
+python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_random_lissajous_no_clip/model_final/ --env-name random_lissajous --equivariant 0
+sleep 2
+echo "==============================================================="
+python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_random_lissajous_no_clip_p_equivariant/model_final/ --env-name random_lissajous --equivariant 1
+sleep 2
+echo "==============================================================="
+python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_random_lissajous_no_clip_v_equivariant/model_final/ --env-name random_lissajous --equivariant 2
+sleep 2
+echo "==============================================================="
+python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_random_lissajous_no_clip_pv_equivariant/model_final/ --env-name random_lissajous --equivariant 3
+sleep 2
+echo "==============================================================="
+python3 eval_policy.py --seed 0 --load-path ./checkpoints/test_random_lissajous_no_clip_pva_equivariant/model_final/ --env-name random_lissajous --equivariant 4
 sleep 2
 echo "==============================================================="
 python3 make_plots.py test_position

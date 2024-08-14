@@ -254,6 +254,7 @@ def parse_args(config):
     parser.add_argument("--state_cov_scalar", type=float, default=0.5, dest="STATE_COV_SCALAR", help="State covariance scalar for initial conditions")
     parser.add_argument("--ref_cov_scalar", type=float, default=3.0, dest="REF_COV_SCALAR", help="Reference covariance scalar for initial conditions")
     parser.add_argument("--no_des_action_in_reward", default=True, action="store_false", dest="USE_DES_ACTION_IN_REWARD", help="specify flag if you DONT WANT to use desired action in the reward")
+    parser.add_argument("--dont-clip-actions", default=True, action="store_false", dest="CLIP_ACTIONS", help="specify flag if you DONT WANT to the env to clip the actions." )
 
     # Model specific arguments
     parser.add_argument("--num-layers", type=int, dest="NUM_LAYERS", default=3, help="Number of layers in the network")
@@ -289,7 +290,7 @@ if __name__ == "__main__":
 
     # Default PPO config
     config = {
-        "LR": 3e-4,
+        "LR": 1e-4,
         "NUM_ENVS": 16,
         "NUM_STEPS": 512,
         "TOTAL_TIMESTEPS": 10e6,# 10e6
@@ -311,6 +312,7 @@ if __name__ == "__main__":
         "REWARD_REACH": False,
         "TERMINAL_REWARD": -25.,
         "USE_DES_ACTION_IN_REWARD": True,
+        "CLIP_ACTIONS": False,
     }
 
     config = parse_args(config)

@@ -57,7 +57,8 @@ class PointLissajousTrackingState(EnvState):
 
 class PointParticleBase:
     def __init__ (self, ref_pos=None, equivariant=False, state_cov_scalar=0.5, ref_cov_scalar=3.0, dt=0.05, max_time=100.0, terminate_on_error=True, 
-                  reward_q_pos = 1e-2, reward_q_vel = 1e-2, reward_r = 1e-4, termination_bound = 10., terminal_reward = 0.0, reward_reach=False, use_des_action_in_reward=True, **kwargs):
+                  reward_q_pos = 1e-2, reward_q_vel = 1e-2, reward_r = 1e-4, termination_bound = 10., terminal_reward = 0.0, reward_reach=False, 
+                  use_des_action_in_reward=True, clip_actions=True, **kwargs):
         self.state_mean = jnp.array([0., 0., 0.])
         self.state_cov = jnp.eye(3) * state_cov_scalar
         self.ref_mean = jnp.array([0., 0., 0.])
@@ -76,6 +77,7 @@ class PointParticleBase:
         self.reward_q_vel = reward_q_vel
         self.reward_r = reward_r
         self.use_des_action_in_reward = use_des_action_in_reward
+        self.clip_actions = clip_actions
 
         self.epsilon_ball_radius = 1e-2
 
