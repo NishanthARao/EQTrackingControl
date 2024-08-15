@@ -58,7 +58,7 @@ class PointLissajousTrackingState(EnvState):
 class PointParticleBase:
     def __init__ (self, ref_pos=None, equivariant=False, state_cov_scalar=0.5, ref_cov_scalar=3.0, dt=0.05, max_time=100.0, terminate_on_error=True, 
                   reward_q_pos = 1e-2, reward_q_vel = 1e-2, reward_r = 1e-4, termination_bound = 10., terminal_reward = 0.0, reward_reach=False, 
-                  use_des_action_in_reward=True, clip_actions=True, **kwargs):
+                  use_des_action_in_reward=True, clip_actions=True, use_abs_reward_fn=False, **kwargs):
         self.state_mean = jnp.array([0., 0., 0.])
         self.state_cov = jnp.eye(3) * state_cov_scalar
         self.ref_mean = jnp.array([0., 0., 0.])
@@ -78,6 +78,7 @@ class PointParticleBase:
         self.reward_r = reward_r
         self.use_des_action_in_reward = use_des_action_in_reward
         self.clip_actions = clip_actions
+        self.use_abs_reward_fn = use_abs_reward_fn
 
         self.epsilon_ball_radius = 1e-2
 
@@ -167,8 +168,12 @@ class PointParticleBase:
         
         dest_reach_reward = lax.select(self.reach_reward, dest_reach_reward_modified, 0.0)
 
-        reward_no_des_act = -self.reward_q_pos * (jnp.linalg.norm(state.ref_pos - state.pos)**2) - self.reward_q_vel * (jnp.linalg.norm(state.ref_vel - state.vel)**2) - self.reward_r * (jnp.linalg.norm(action)**2) + terminal_reward + dest_reach_reward
-        reward_yes_des_act = -self.reward_q_pos * (jnp.linalg.norm(state.ref_pos - state.pos)**2) - self.reward_q_vel * (jnp.linalg.norm(state.ref_vel - state.vel)**2) - self.reward_r * (jnp.linalg.norm(action - des_action)**2) + terminal_reward + dest_reach_reward
+        if self.use_abs_reward_fn:
+            reward_no_des_act = -self.reward_q_pos * (jnp.sum(jnp.abs(state.ref_pos - state.pos))) - self.reward_q_vel * (jnp.sum(jnp.abs(state.ref_vel - state.vel))) - self.reward_r * jnp.sum((jnp.abs(action))) + terminal_reward + dest_reach_reward
+            reward_yes_des_act = -self.reward_q_pos * (jnp.sum(jnp.abs(state.ref_pos - state.pos))) - self.reward_q_vel * (jnp.sum(jnp.abs(state.ref_vel - state.vel))) - self.reward_r * (jnp.sum(jnp.abs(action - des_action))) + terminal_reward + dest_reach_reward
+        else:
+            reward_no_des_act = -self.reward_q_pos * (jnp.linalg.norm(state.ref_pos - state.pos)**2) - self.reward_q_vel * (jnp.linalg.norm(state.ref_vel - state.vel)**2) - self.reward_r * (jnp.linalg.norm(action)**2) + terminal_reward + dest_reach_reward
+            reward_yes_des_act = -self.reward_q_pos * (jnp.linalg.norm(state.ref_pos - state.pos)**2) - self.reward_q_vel * (jnp.linalg.norm(state.ref_vel - state.vel)**2) - self.reward_r * (jnp.linalg.norm(action - des_action)**2) + terminal_reward + dest_reach_reward
 
         final_reward = lax.select(self.use_des_action_in_reward, reward_yes_des_act, reward_no_des_act)
 

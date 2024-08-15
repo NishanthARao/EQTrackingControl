@@ -645,13 +645,13 @@ class PointParticleLissajousTracking(PointParticleBase):
         vel = jrandom.multivariate_normal(vel_key, jnp.zeros(3), self.state_cov)
 
 
-        amplitudes = jrandom.uniform(amp_key, (3,), minval=-5., maxval=5.)
-        frequencies = jrandom.uniform(freq_key, (3,), minval=0.01, maxval=0.05)
-        phases = jrandom.uniform(phase_key, (3,), minval=0., maxval=2.0 * jnp.pi)
+        # amplitudes = jrandom.uniform(amp_key, (3,), minval=-5., maxval=5.)
+        # frequencies = jrandom.uniform(freq_key, (3,), minval=0.01, maxval=0.05)
+        # phases = jrandom.uniform(phase_key, (3,), minval=0., maxval=2.0 * jnp.pi)
 
-        # amplitudes = jnp.array([ 1.36172305,  2.68769884, -2.41660407])
-        # frequencies = jnp.array([0.01837562, 0.02134107, 0.01045938])
-        # phases = jnp.array([0.6374367 , 1.99830445, 0.79015325])
+        amplitudes = jnp.array([ 1.36172305,  2.68769884, -2.41660407])
+        frequencies = jnp.array([0.01837562, 0.02134107, 0.01045938])
+        phases = jnp.array([0.6374367 , 1.99830445, 0.79015325])
 
         time = 0.0
 

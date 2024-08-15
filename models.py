@@ -32,7 +32,7 @@ class ActorCritic(nn.Module):
             out_activation = nn.hard_tanh
         elif self.out_activation == "hard_tanh_scaled":
             out_activation = nn.hard_tanh_scaled
-        elif self.out_activation == "None":
+        elif self.out_activation is None:
             out_activation = None
         else:
             raise ValueError("Invalid output activation function.")

@@ -43,19 +43,24 @@ def make_train(config):
     print("Terminate on error? : ", config["TERMINATE_ON_ERROR"])
     if config["env_name"] == "position":
         env = PointParticlePosition(equivariant=config["EQUIVARIANT"], terminate_on_error=config["TERMINATE_ON_ERROR"], reward_q_pos=config["REWARD_Q_POS"], reward_q_vel=config["REWARD_Q_VEL"], reward_r=config["REWARD_R"], reward_reach=config["REWARD_REACH"], 
-                                    termination_bound=config["TERMINATION_BOUND"], terminal_reward=config["TERMINAL_REWARD"], state_cov_scalar=config["STATE_COV_SCALAR"], ref_cov_scalar=config["REF_COV_SCALAR"], use_des_action_in_reward=config["USE_DES_ACTION_IN_REWARD"])
+                                    termination_bound=config["TERMINATION_BOUND"], terminal_reward=config["TERMINAL_REWARD"], state_cov_scalar=config["STATE_COV_SCALAR"], ref_cov_scalar=config["REF_COV_SCALAR"], use_des_action_in_reward=config["USE_DES_ACTION_IN_REWARD"],
+                                    clip_actions=config["CLIP_ACTIONS"], use_abs_reward_fn=config["USE_ABS_REWARD_FN"])
     elif config["env_name"] == "constant_velocity":
         env = PointParticleConstantVelocity(equivariant=config["EQUIVARIANT"], terminate_on_error=config["TERMINATE_ON_ERROR"], reward_q_pos=config["REWARD_Q_POS"], reward_q_vel=config["REWARD_Q_VEL"], reward_r=config["REWARD_R"], reward_reach=config["REWARD_REACH"],
-                                           termination_bound=config["TERMINATION_BOUND"], terminal_reward=config["TERMINAL_REWARD"], state_cov_scalar=config["STATE_COV_SCALAR"], ref_cov_scalar=config["REF_COV_SCALAR"], use_des_action_in_reward=config["USE_DES_ACTION_IN_REWARD"])
+                                           termination_bound=config["TERMINATION_BOUND"], terminal_reward=config["TERMINAL_REWARD"], state_cov_scalar=config["STATE_COV_SCALAR"], ref_cov_scalar=config["REF_COV_SCALAR"], use_des_action_in_reward=config["USE_DES_ACTION_IN_REWARD"],
+                                    clip_actions=config["CLIP_ACTIONS"], use_abs_reward_fn=config["USE_ABS_REWARD_FN"])
     elif config["env_name"] == "random_walk_position":
         env = PointParticleRandomWalkPosition(equivariant=config["EQUIVARIANT"], terminate_on_error=config["TERMINATE_ON_ERROR"], reward_q_pos=config["REWARD_Q_POS"], reward_q_vel=config["REWARD_Q_VEL"], reward_r=config["REWARD_R"], reward_reach=config["REWARD_REACH"],
-                                           termination_bound=config["TERMINATION_BOUND"], terminal_reward=config["TERMINAL_REWARD"], state_cov_scalar=config["STATE_COV_SCALAR"], ref_cov_scalar=config["REF_COV_SCALAR"], use_des_action_in_reward=config["USE_DES_ACTION_IN_REWARD"])
+                                           termination_bound=config["TERMINATION_BOUND"], terminal_reward=config["TERMINAL_REWARD"], state_cov_scalar=config["STATE_COV_SCALAR"], ref_cov_scalar=config["REF_COV_SCALAR"], use_des_action_in_reward=config["USE_DES_ACTION_IN_REWARD"],
+                                    clip_actions=config["CLIP_ACTIONS"], use_abs_reward_fn=config["USE_ABS_REWARD_FN"])
     elif config["env_name"] == "random_walk_velocity" or "random_lissajous":
         env = PointParticleRandomWalkVelocity(equivariant=config["EQUIVARIANT"], terminate_on_error=config["TERMINATE_ON_ERROR"], reward_q_pos=config["REWARD_Q_POS"], reward_q_vel=config["REWARD_Q_VEL"], reward_r=config["REWARD_R"], reward_reach=config["REWARD_REACH"],
-                                           termination_bound=config["TERMINATION_BOUND"], terminal_reward=config["TERMINAL_REWARD"], state_cov_scalar=config["STATE_COV_SCALAR"], ref_cov_scalar=config["REF_COV_SCALAR"], use_des_action_in_reward=config["USE_DES_ACTION_IN_REWARD"])
+                                           termination_bound=config["TERMINATION_BOUND"], terminal_reward=config["TERMINAL_REWARD"], state_cov_scalar=config["STATE_COV_SCALAR"], ref_cov_scalar=config["REF_COV_SCALAR"], use_des_action_in_reward=config["USE_DES_ACTION_IN_REWARD"],
+                                    clip_actions=config["CLIP_ACTIONS"], use_abs_reward_fn=config["USE_ABS_REWARD_FN"])
     elif config["env_name"] == "random_walk_accel":
         env = PointParticleRandomWalkAccel(equivariant=config["EQUIVARIANT"], terminate_on_error=config["TERMINATE_ON_ERROR"], reward_q_pos=config["REWARD_Q_POS"], reward_q_vel=config["REWARD_Q_VEL"], reward_r=config["REWARD_R"], reward_reach=config["REWARD_REACH"],
-                                           termination_bound=config["TERMINATION_BOUND"], terminal_reward=config["TERMINAL_REWARD"], state_cov_scalar=config["STATE_COV_SCALAR"], ref_cov_scalar=config["REF_COV_SCALAR"], use_des_action_in_reward=config["USE_DES_ACTION_IN_REWARD"])
+                                           termination_bound=config["TERMINATION_BOUND"], terminal_reward=config["TERMINAL_REWARD"], state_cov_scalar=config["STATE_COV_SCALAR"], ref_cov_scalar=config["REF_COV_SCALAR"], use_des_action_in_reward=config["USE_DES_ACTION_IN_REWARD"],
+                                    clip_actions=config["CLIP_ACTIONS"], use_abs_reward_fn=config["USE_ABS_REWARD_FN"])
     else:
         raise ValueError("Invalid environment name")
     env = LogWrapper(env)
@@ -255,6 +260,7 @@ def parse_args(config):
     parser.add_argument("--ref_cov_scalar", type=float, default=3.0, dest="REF_COV_SCALAR", help="Reference covariance scalar for initial conditions")
     parser.add_argument("--no_des_action_in_reward", default=True, action="store_false", dest="USE_DES_ACTION_IN_REWARD", help="specify flag if you DONT WANT to use desired action in the reward")
     parser.add_argument("--dont-clip-actions", default=True, action="store_false", dest="CLIP_ACTIONS", help="specify flag if you DONT WANT to the env to clip the actions." )
+    parser.add_argument("--use-abs-reward-fn", default=False, action="store_true", dest="USE_ABS_REWARD_FN", help="Use absolute errors instead of quadratic errors in the reward function.")
 
     # Model specific arguments
     parser.add_argument("--num-layers", type=int, dest="NUM_LAYERS", default=3, help="Number of layers in the network")
@@ -304,6 +310,7 @@ if __name__ == "__main__":
         "MAX_GRAD_NORM": 0.5,
         "ACTIVATION": "leaky_relu",
         "OUT_ACTIVATION": "hard_tanh",
+        "OUT_ACTIVATION": None,
         "ANNEAL_LR": True,
         "DEBUG": False,
         "REWARD_Q_POS": 1e-2,
@@ -312,7 +319,8 @@ if __name__ == "__main__":
         "REWARD_REACH": False,
         "TERMINAL_REWARD": -25.,
         "USE_DES_ACTION_IN_REWARD": True,
-        "CLIP_ACTIONS": False,
+        "CLIP_ACTIONS": True,
+        "USE_ABS_REWARD_FN": True,
     }
 
     config = parse_args(config)

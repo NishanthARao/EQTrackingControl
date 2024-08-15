@@ -105,27 +105,27 @@ if __name__ == "__main__":
     if args.env_name == "position":
         env = PointParticlePosition(equivariant=train_config["EQUIVARIANT"], terminate_on_error=train_config["TERMINATE_ON_ERROR"], reward_q_pos=train_config["REWARD_Q_POS"], reward_q_vel=train_config["REWARD_Q_VEL"], reward_r=train_config["REWARD_R"], reward_reach=train_config["REWARD_REACH"], 
                                     termination_bound=train_config["TERMINATION_BOUND"], terminal_reward=train_config["TERMINAL_REWARD"], state_cov_scalar=train_config["STATE_COV_SCALAR"], ref_cov_scalar=train_config["REF_COV_SCALAR"], use_des_action_in_reward=train_config["USE_DES_ACTION_IN_REWARD"],
-                                           clip_actions=train_config["CLIP_ACTIONS"])
+                                           clip_actions=train_config["CLIP_ACTIONS"], use_abs_reward_fn=train_config["USE_ABS_REWARD_FN"])
     elif args.env_name == "constant_velocity":
         env = PointParticleConstantVelocity(equivariant=train_config["EQUIVARIANT"], terminate_on_error=train_config["TERMINATE_ON_ERROR"], reward_q_pos=train_config["REWARD_Q_POS"], reward_q_vel=train_config["REWARD_Q_VEL"], reward_r=train_config["REWARD_R"], reward_reach=train_config["REWARD_REACH"],
                                            termination_bound=train_config["TERMINATION_BOUND"], terminal_reward=train_config["TERMINAL_REWARD"], state_cov_scalar=train_config["STATE_COV_SCALAR"], ref_cov_scalar=train_config["REF_COV_SCALAR"], use_des_action_in_reward=train_config["USE_DES_ACTION_IN_REWARD"],
-                                           clip_actions=train_config["CLIP_ACTIONS"])
+                                           clip_actions=train_config["CLIP_ACTIONS"], use_abs_reward_fn=train_config["USE_ABS_REWARD_FN"])
     elif args.env_name == "random_walk_position":
         env = PointParticleRandomWalkPosition(equivariant=train_config["EQUIVARIANT"], terminate_on_error=train_config["TERMINATE_ON_ERROR"], reward_q_pos=train_config["REWARD_Q_POS"], reward_q_vel=train_config["REWARD_Q_VEL"], reward_r=train_config["REWARD_R"], reward_reach=train_config["REWARD_REACH"],
                                            termination_bound=train_config["TERMINATION_BOUND"], terminal_reward=train_config["TERMINAL_REWARD"], state_cov_scalar=train_config["STATE_COV_SCALAR"], ref_cov_scalar=train_config["REF_COV_SCALAR"], use_des_action_in_reward=train_config["USE_DES_ACTION_IN_REWARD"],
-                                           clip_actions=train_config["CLIP_ACTIONS"])
+                                           clip_actions=train_config["CLIP_ACTIONS"], use_abs_reward_fn=train_config["USE_ABS_REWARD_FN"])
     elif args.env_name == "random_walk_velocity":
         env = PointParticleRandomWalkVelocity(equivariant=train_config["EQUIVARIANT"], terminate_on_error=train_config["TERMINATE_ON_ERROR"], reward_q_pos=train_config["REWARD_Q_POS"], reward_q_vel=train_config["REWARD_Q_VEL"], reward_r=train_config["REWARD_R"], reward_reach=train_config["REWARD_REACH"],
                                            termination_bound=train_config["TERMINATION_BOUND"], terminal_reward=train_config["TERMINAL_REWARD"], state_cov_scalar=train_config["STATE_COV_SCALAR"], ref_cov_scalar=train_config["REF_COV_SCALAR"], use_des_action_in_reward=train_config["USE_DES_ACTION_IN_REWARD"],
-                                           clip_actions=train_config["CLIP_ACTIONS"])
+                                           clip_actions=train_config["CLIP_ACTIONS"], use_abs_reward_fn=train_config["USE_ABS_REWARD_FN"])
     elif args.env_name == "random_walk_accel":
         env = PointParticleRandomWalkAccel(equivariant=train_config["EQUIVARIANT"], terminate_on_error=train_config["TERMINATE_ON_ERROR"], reward_q_pos=train_config["REWARD_Q_POS"], reward_q_vel=train_config["REWARD_Q_VEL"], reward_r=train_config["REWARD_R"], reward_reach=train_config["REWARD_REACH"],
                                            termination_bound=train_config["TERMINATION_BOUND"], terminal_reward=train_config["TERMINAL_REWARD"], state_cov_scalar=train_config["STATE_COV_SCALAR"], ref_cov_scalar=train_config["REF_COV_SCALAR"], use_des_action_in_reward=train_config["USE_DES_ACTION_IN_REWARD"],
-                                           clip_actions=train_config["CLIP_ACTIONS"])
+                                           clip_actions=train_config["CLIP_ACTIONS"], use_abs_reward_fn=train_config["USE_ABS_REWARD_FN"])
     elif args.env_name == "random_lissajous":
         env = PointParticleLissajousTracking(equivariant=train_config["EQUIVARIANT"], terminate_on_error=train_config["TERMINATE_ON_ERROR"], reward_q_pos=train_config["REWARD_Q_POS"], reward_q_vel=train_config["REWARD_Q_VEL"], reward_r=train_config["REWARD_R"], reward_reach=train_config["REWARD_REACH"],
                                            termination_bound=train_config["TERMINATION_BOUND"], terminal_reward=train_config["TERMINAL_REWARD"], state_cov_scalar=train_config["STATE_COV_SCALAR"], ref_cov_scalar=train_config["REF_COV_SCALAR"], use_des_action_in_reward=train_config["USE_DES_ACTION_IN_REWARD"],
-                                           clip_actions=train_config["CLIP_ACTIONS"])
+                                           clip_actions=train_config["CLIP_ACTIONS"], use_abs_reward_fn=train_config["USE_ABS_REWARD_FN"])
     else:
         raise ValueError("Invalid environment name")
     
